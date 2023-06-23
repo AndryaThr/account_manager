@@ -1,0 +1,6 @@
+default user: John Doe
+pass: password
+digit: 123456
+
+bcrypt config:
+  salt: 12
