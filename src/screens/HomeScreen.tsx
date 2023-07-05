@@ -1,5 +1,5 @@
 import React from "react";
-import { FlatList, TouchableOpacity, View } from "react-native";
+import { FlatList, TouchableOpacity, View, RefreshControl } from "react-native";
 import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import ExtendedStyleSheet from "../components/styles/ExtendedStyleSheet";
 import theme from "../constants/colors";
@@ -15,7 +15,11 @@ import {
 import { StateType, useAppDispatch, useAppSelector } from "../config/redux";
 import AppBar from "../components/appbar/AppBar";
 import AppContainer from "../components/container/AppContainer";
-import { NavigationProp, useNavigation } from "@react-navigation/native";
+import {
+  NavigationProp,
+  useFocusEffect,
+  useNavigation,
+} from "@react-navigation/native";
 import { MainStackParamList } from "../navigation/types";
 import { userLogoutAction } from "../config/redux/actions";
 import Account from "../controller/database/Account";
@@ -51,18 +55,22 @@ const HomeScreen = () => {
     console.log("Sort button pressed");
   }, []);
 
-  React.useEffect(() => {
-    if (user) {
-      Account.fetchAccountOfUser(user?.user_id)
-        .then((val) => {
-          setList(val);
-        })
-        .catch((err) => {
-          console.log(err);
-          setList([]);
-        });
-    }
-  }, []);
+  useFocusEffect(
+    React.useCallback(() => {
+      setList(undefined);
+
+      if (user) {
+        Account.fetchAccountOfUser(user?.user_id)
+          .then((val) => {
+            setList(val);
+          })
+          .catch((err) => {
+            console.log(err);
+            setList([]);
+          });
+      }
+    }, [])
+  );
 
   return (
     <AppContainer
@@ -126,6 +134,7 @@ const HomeScreen = () => {
           }}
           showsVerticalScrollIndicator={false}
           contentContainerStyle={styles.flatlist}
+          refreshControl={<RefreshControl refreshing />}
         />
       )}
     </AppContainer>

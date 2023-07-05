@@ -104,6 +104,7 @@ function ControlledIconPicker<T extends FieldValues>(
         icon: iconItem.sm_icon,
         label: iconItem.sm_label,
         folder: iconItem.folder,
+        id: iconItem.sm_id,
       });
       bottomSheetHandle.current?.close();
     },
@@ -132,6 +133,7 @@ function ControlledIconPicker<T extends FieldValues>(
       if (field.value.folder !== folder) {
         field.onChange({
           icon: Icons.resolveImageUri("00", "Default.png"),
+          id: 0,
         });
       }
     }

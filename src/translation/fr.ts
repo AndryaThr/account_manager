@@ -20,6 +20,7 @@ const fr = {
       username: "Nom d'utilisateur du compte",
       password: "Mot de passe",
       mail: "Mail",
+      phone: "Téléphone",
       confirm_pass: "Confirmation mot de passe",
       token: "Token",
       placeholder_token: "Insérer votre token ici si vous en avez",
@@ -43,6 +44,8 @@ const fr = {
       username:
         "5 à 20 caractères alphanumériques, caractères spéciaux non supportés",
       login_error: "Utilisateur ou mot de passe invalide",
+      phone_number: "Caractères reconnus: 0 ~ 9, 8 caractères minimum",
+      ph_length: "Un numéro téléphone comporte au moins 10 chiffres",
     },
     delete: {
       title: "Confirmer suppression",

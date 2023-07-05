@@ -33,12 +33,16 @@ import {
 import ControlledPicker from "../components/input/ControlledPicker";
 import SocialMedia from "../controller/database/SocialMedia";
 import ControlledIconPicker from "../components/input/ControlledIconPicker";
-import { NumberBetweenZeroAndFifteen } from "../controller/types";
+import { NumberBetweenZeroAndFifteen, UserType } from "../controller/types";
 import Icons from "../controller/backend/Icons";
 import { findInObject } from "../utils/functions.objects";
 import Loader from "../components/loader/Loader";
 import { icon_path } from "../constants/paths";
 import ControlledSecurityQuestion from "../components/input/ControlledSecurityQuestion";
+import SecurityQuestion from "../controller/database/SecurityQuestion";
+import { StateType, useAppDispatch, useAppSelector } from "../config/redux";
+import AccountManagement from "../controller/backend/AccountManagement";
+import { toggleLoadingAction } from "../config/redux/actions";
 
 type CategoryType = {
   id?: NumberBetweenZeroAndFifteen;
@@ -50,7 +54,7 @@ type AccountFormValues = {
   name: string;
   username: string;
   mail: string;
-  phone?: string;
+  phone: string;
   password: string;
   token?: string;
   category: {
@@ -100,12 +104,46 @@ const AccountForm = () => {
     name: "security_question",
     control,
   });
+  const { user } = useAppSelector<StateType>((state) => state.authReducer);
+  const dispatch = useAppDispatch();
 
   const { category, platform } = watch();
 
-  const handleFormSubmit = React.useCallback((data: AccountFormValues) => {
-    console.log("data : ", JSON.stringify(data, null, 4));
-  }, []);
+  const handleFormSubmit = React.useCallback(
+    async (data: AccountFormValues) => {
+      dispatch(toggleLoadingAction(true));
+
+      const final_data = {
+        account: {
+          acc_user: user?.user_id as number,
+          acc_name: data.name,
+          acc_uname: data.username,
+          acc_mail: data.mail,
+          acc_token: data.token,
+          acc_password: data.password,
+          acc_phone: data.phone,
+        },
+        platform: {
+          id: data.platform.id,
+          category: data.category.id,
+        },
+        security_question:
+          data.security_question?.map((e) => ({
+            id: e.id,
+            question: e.question ?? "",
+            answer: e.answer ?? "",
+          })) ?? [],
+      };
+
+      const addAcc = await AccountManagement.addNewAccount(final_data);
+      console.log(addAcc);
+
+      dispatch(toggleLoadingAction(false));
+
+      navigation.navigate("home");
+    },
+    []
+  );
 
   const handleShowPasswordAction = React.useCallback(() => {
     setShowSecuredText((p) => !p);
@@ -212,7 +250,7 @@ const AccountForm = () => {
           onLeftIconPress={() => navigation.goBack()}
         />
       }
-      height={heightPercentage(90)}
+      height={heightPercentage(87)}
       paddingHorizontalPercentage={5}
     >
       {readyState ? (
@@ -367,7 +405,7 @@ const AccountForm = () => {
                 control={control}
                 leftIcon={() => (
                   <MaterialIcons
-                    name="mail"
+                    name="phone"
                     size={sizes.inputIcon}
                     color={inputColor}
                   />
@@ -378,14 +416,15 @@ const AccountForm = () => {
                 labelStyle={styles.labelStyle}
                 placeholderStyle={styles.placeholderStyle}
                 textErrorStyle={styles.textErrorStyle}
-                placeholder={t("example@example.mail").toString()}
-                label={t("common.form.mail").toString()}
+                placeholder={t("common.form.phone").toString()}
+                label={t("common.form.phone").toString()}
                 placeholderTextColor={inputColor}
                 showIcon={false}
                 rules={{
+                  required: false || t("message.errors.required").toString(),
                   pattern: {
-                    value: /^\d{10}$/, // 10-digit phone number pattern
-                    message: "Invalid phone number",
+                    value: /^(\+)?\d{8,}$/, // 10-digit phone number pattern
+                    message: t("message.errors.phone_number"),
                   },
                 }}
                 defaultValue="0350255522"

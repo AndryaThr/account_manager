@@ -43,7 +43,7 @@ type ControlledSecurityQuestionProps<T extends FieldValues> = {
 
   onCrossPress: (arg0: number) => void;
   arrayId: number;
-} & Omit<UseControllerProps<T>, "rules" | "defaultValue">;
+} & Omit<UseControllerProps<T>, "rules">;
 
 const crossSize = widthPercentage(6);
 
@@ -96,6 +96,7 @@ function ControlledSecurityQuestion<T extends FieldValues>(
         labelStyle={styles.labelStyle}
         placeholderStyle={styles.placeholderStyle}
         textErrorStyle={styles.textErrorStyle}
+        showIcon={false}
         leftIcon={() => (
           <MaterialCommunityIcons
             name="chat-question"
@@ -120,6 +121,7 @@ function ControlledSecurityQuestion<T extends FieldValues>(
         labelStyle={styles.labelStyle}
         placeholderStyle={styles.placeholderStyle}
         textErrorStyle={styles.textErrorStyle}
+        showIcon={false}
         leftIcon={() => (
           <MaterialCommunityIcons
             name="spellcheck"
@@ -133,6 +135,7 @@ function ControlledSecurityQuestion<T extends FieldValues>(
         rules={{
           required: false || t("message.errors.required").toString(),
         }}
+        multiline
       />
     </View>
   );
@@ -161,7 +164,7 @@ const styles = ExtendedStyleSheet.create({
     marginBottom: heightPercentage(1),
   },
   input: {
-    paddingHorizontal: hScale(12),
+    paddingHorizontal: "5%",
     borderRadius: sizes.borderRadius,
     borderWidth: 0.5,
     borderColor: inputColor,

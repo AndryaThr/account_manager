@@ -58,14 +58,14 @@ export default class User {
     });
   }
 
-  static create(
-    name: string,
-    firstname: string,
-    username: string,
-    digit: string,
-    password: string,
-    p_key: string
-  ) {
+  static create(obj: {
+    name: string;
+    firstname: string;
+    username: string;
+    digit: string;
+    password: string;
+    p_key: string;
+  }) {
     const db = Database.database;
     const query = `
       INSERT INTO user 
@@ -76,6 +76,8 @@ export default class User {
     if (!db) {
       throw new Error("Database must be opened before transaction");
     }
+
+    const { name, firstname, username, digit, password, p_key } = obj;
 
     return new Promise<boolean>((resolve, reject) => {
       db.transaction((tx: SQLite.SQLTransaction) => {
