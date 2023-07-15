@@ -17,7 +17,7 @@ import { useTranslation } from "react-i18next";
 
 type AppBarProps = {
   title: string;
-  subtitle: string;
+  subtitle?: string;
   leftIcon?: React.ReactNode;
   onLeftIconPress?: (event?: GestureResponderEvent) => void;
   rightIcon?: React.ReactNode;
@@ -82,8 +82,13 @@ const AppBar = ({
           ]}
         >
           {leftIcon && (
-            <TouchableNativeFeedback onPress={leftIconPressAction}>
-              <View style={styles.leftIconContainer}>{leftIcon}</View>
+            <TouchableNativeFeedback
+              disabled={onLeftIconPress ? false : true}
+              onPress={leftIconPressAction}
+            >
+              <View style={[styles.iconContainer, styles.leftIconContainer]}>
+                {leftIcon}
+              </View>
             </TouchableNativeFeedback>
           )}
           <View style={styles.appTitleContainer}>
@@ -95,8 +100,13 @@ const AppBar = ({
             </StyledText>
           </View>
           {rightIcon && (
-            <TouchableNativeFeedback onPress={rightIconPressAction}>
-              <View style={styles.rightIconContainer}>{rightIcon}</View>
+            <TouchableNativeFeedback
+              disabled={onRightIconPress ? false : true}
+              onPress={rightIconPressAction}
+            >
+              <View style={[styles.iconContainer, styles.rightIconContainer]}>
+                {rightIcon}
+              </View>
             </TouchableNativeFeedback>
           )}
         </View>
@@ -174,7 +184,7 @@ const styles = ExtendedStyleSheet.create({
   /* title */
   appTitleMainContainer: {
     paddingHorizontal: widthPercentage(5),
-    marginTop: heightPercentage(2),
+    marginTop: heightPercentage(1),
   },
   appTitleContainer: {
     alignItems: "center",
@@ -183,17 +193,22 @@ const styles = ExtendedStyleSheet.create({
   appActionContainer: {
     flexDirection: "row",
     justifyContent: "space-between",
+    alignItems: "stretch",
   },
   appTitleLabel: {
-    fontSize: moderateScale(25),
+    fontSize: moderateScale(20),
     color: theme.text,
   },
   appDescriptionLabel: {
-    fontSize: moderateScale(16),
+    fontSize: moderateScale(14),
     color: theme.text,
   },
 
   /* icon container */
+  iconContainer: {
+    ...ExtendedStyleSheet.defaultStyles.center,
+    width: "15%",
+  },
   leftIconContainer: {},
   rightIconContainer: {},
 
@@ -209,7 +224,7 @@ const styles = ExtendedStyleSheet.create({
   },
   appActionLeftTitle: {
     color: theme.text,
-    fontSize: moderateScale(18),
+    fontSize: moderateScale(16),
   },
   appActionLeftSubtitle: {
     color: theme.text,
@@ -217,7 +232,7 @@ const styles = ExtendedStyleSheet.create({
   /* button */
   appActionLeftButtonLabel: {
     color: theme.purple,
-    fontSize: moderateScale(18),
+    fontSize: moderateScale(16),
   },
   appActionLeftButton: {
     ...ExtendedStyleSheet.defaultStyles.center,

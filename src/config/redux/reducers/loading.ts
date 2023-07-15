@@ -2,9 +2,9 @@ import { ActionType, StateType } from "..";
 import { LOADING_STATE } from "../types";
 import { initialValue } from "../data";
 
-export default function loadingReducer<T>(
-  state: StateType = initialValue,
-  action: ActionType<T>
+export default function loadingReducer(
+  state = initialValue,
+  action: ActionType
 ) {
   switch (action.type) {
     case LOADING_STATE:

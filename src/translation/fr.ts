@@ -5,6 +5,8 @@ const fr = {
     nothing: "Rien à afficher",
     default: "Par défaut",
     all: "Toutes les catégories",
+    category_order: "Catégorie",
+    date: "Date d'ajout",
     button: {
       new: "Ajouter",
       login: "Se connecter",
@@ -13,9 +15,13 @@ const fr = {
       default: "Valeurs par défaut",
       yes: "Oui",
       no: "Non",
+      validate: "Valider",
+      clear: "Effacer",
+      reset: "Réinitialiser",
+      clear_filter: "Effacer le filtre",
     },
     form: {
-      name: "Noms",
+      name: "Nom",
       firstname: "Prénoms",
       username: "Nom d'utilisateur du compte",
       password: "Mot de passe",
@@ -36,6 +42,10 @@ const fr = {
     },
     explication_token:
       "Les jetons d'authentification (token) fonctionnent à la manière d'un ticket d'entrée à validité limitée : ils accordent un accès en continu pendant leur durée de validité. Dès que l'utilisateur se déconnecte ou quitte l'application, le jeton est invalidé.",
+    asc: "Ascendant",
+    desc: "Descendant",
+    order: "Ordre",
+    undefined: "...",
   },
   message: {
     error: "Erreur de développement",
@@ -74,6 +84,8 @@ const fr = {
       subtitle: "Gestion des comptes",
       description: "Vous pouvez gérer vos comptes ici",
       sort: "Trier",
+      sort_by: "Trier par",
+      filter: "Filtrer par",
     },
     new: {
       title: "Ajout de compte",
@@ -86,6 +98,18 @@ const fr = {
       security_question: "Question(s) de sécurité",
       sq_description:
         "Cliquez sur le bouton pour une question de sécurité lors de la création du compte",
+    },
+    digit: {
+      title: "Confirmer votre identité",
+      description: "On n'est jamais trop prudent",
+      added: "Ajouté le {{x}}",
+      username: "user",
+      mail: "mail",
+    },
+    details: {
+      title: "Détails d'un compte",
+      description: "Informations du compte",
+      sq_description: "Pas de question de sécurité enregistrée pour ce compte",
     },
   },
 };

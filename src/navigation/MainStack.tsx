@@ -2,15 +2,16 @@ import { createStackNavigator } from "@react-navigation/stack";
 import React from "react";
 import AuthScreen from "../screens/AuthScreen";
 import HomeScreen from "../screens/HomeScreen";
-import { useAppSelector } from "../config/redux";
+import { StateType, useAppSelector } from "../config/redux";
 import ForgetPassword from "../screens/ForgetPassword";
 import { MainStackParamList } from "./types";
 import AccountForm from "../screens/AccountForm";
+import AccountDetails from "../screens/AccountDetails";
 
 const Stack = createStackNavigator<MainStackParamList>();
 
 const MainStack = () => {
-  const { user } = useAppSelector((state) => state.authReducer);
+  const { user } = useAppSelector<StateType>((state) => state.authReducer);
 
   return (
     <Stack.Navigator
@@ -29,6 +30,7 @@ const MainStack = () => {
         <Stack.Group>
           <Stack.Screen name="home" component={HomeScreen} />
           <Stack.Screen name="add_account" component={AccountForm} />
+          <Stack.Screen name="details_account" component={AccountDetails} />
         </Stack.Group>
       )}
     </Stack.Navigator>

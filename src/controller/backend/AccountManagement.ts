@@ -1,3 +1,4 @@
+import { formatDateToISOString } from "../../utils/functions.string";
 import Account from "../database/Account";
 import SecurityQuestion from "../database/SecurityQuestion";
 import { NumberBetweenZeroAndFifteen } from "../types";
@@ -36,6 +37,7 @@ class AccountManagement {
         acc_password: data.account.acc_password,
         acc_sm: data.platform.id,
         acc_phone: data.account.acc_phone ?? "",
+        acc_addate: new Date().toISOString(),
       };
 
       const accountAddResult = await Account.addAccount(account);

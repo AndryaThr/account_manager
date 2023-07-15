@@ -2,7 +2,7 @@ import { Text, TextProps, TextStyle } from "react-native";
 import ExtendedStyleSheet from "../styles/ExtendedStyleSheet";
 
 type ExtendedTextProps = {
-  children: React.ReactNode | string | JSX.Element;
+  children?: React.ReactNode | string | JSX.Element;
   italic?: boolean;
   weight?: "1" | "2" | "3" | "4" | "5";
   textStyle?: Omit<TextStyle, "fontStyle" | "fontWeight">;

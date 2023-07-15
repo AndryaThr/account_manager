@@ -7,6 +7,9 @@ import {
   heightPercentage,
   widthPercentage,
 } from "../../utils/functions.dimensions";
+import { useFocusEffect } from "@react-navigation/native";
+import { color } from "react-native-reanimated";
+import { AppBarContext } from "../../main/context";
 
 type AppContainerProps = {
   appbar: React.ReactNode;
@@ -21,6 +24,16 @@ const AppContainer = ({
   height,
   paddingHorizontalPercentage,
 }: AppContainerProps) => {
+  const { setColor } = React.useContext(AppBarContext);
+
+  useFocusEffect(
+    React.useCallback(() => {
+      if (!appbar) {
+        setColor(theme.background);
+      }
+    }, [])
+  );
+
   return (
     <View style={[styles.container]}>
       {appbar && appbar}

@@ -2,12 +2,12 @@ import { ActionType } from "..";
 import { USER_LOGIN, USER_LOGOUT } from "../types";
 import { UserType } from "../../../controller/types";
 
-const userLoginAction = (payload: UserType): ActionType<UserType> => ({
+const userLoginAction = (payload: UserType): ActionType => ({
   type: USER_LOGIN,
   payload,
 });
 
-const userLogoutAction = (): ActionType<null> => ({
+const userLogoutAction = (): ActionType => ({
   type: USER_LOGOUT,
 });
 

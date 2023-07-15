@@ -3,18 +3,20 @@ import thunk from "redux-thunk";
 import appReducer from "./reducers";
 import { useAppDispatch, useAppSelector } from "./hooks";
 import { UserType } from "../../controller/types";
+import loadingReducer from "./reducers/loading";
+import authReducer from "./reducers/user.auth";
 
 const store = configureStore({
   reducer: appReducer,
   enhancers: [applyMiddleware(thunk)],
 });
 
-type RootState = ReturnType<typeof store.getState>;
+type RootState = ReturnType<typeof appReducer>;
 type AppDispatch = typeof store.dispatch;
 
-type ActionType<T> = {
+type ActionType = {
   type: string;
-  payload?: T;
+  payload?: any;
 };
 
 type StateType = {

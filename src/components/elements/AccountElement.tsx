@@ -8,37 +8,55 @@ import {
 } from "../../utils/functions.dimensions";
 import sizes from "../../constants/sizes";
 import ExtendedStyleSheet from "../styles/ExtendedStyleSheet";
-import { AccountInformationType } from "../../controller/types";
+import { AccountInformationReducedType } from "../../controller/types";
 import Icons from "../../controller/backend/Icons";
 import StyledText from "../texts/StyledText";
-import * as FS from "expo-file-system";
+import * as FileSystem from "expo-file-system";
 import { MaterialIcons } from "@expo/vector-icons";
 import IconDisplay from "../image/IconDisplay";
+import { formatDateToString } from "../../utils/functions.string";
+import { useTranslation } from "react-i18next";
+import Account from "../../controller/database/Account";
+import SecurityQuestion from "../../controller/database/SecurityQuestion";
+import { NavigationProp, useNavigation } from "@react-navigation/native";
+import { MainStackParamList } from "../../navigation/types";
 
 type AccountElementType = {
-  item: AccountInformationType;
-  onPress?: () => void;
+  item: AccountInformationReducedType;
 };
 
-const AccountElement = ({ item, onPress }: AccountElementType) => {
+const AccountElement = ({ item }: AccountElementType) => {
   const [im, setIm] = React.useState<string>(
     Icons.resolveImageUri("00", "Default.png")
   );
+  const [date, setDate] = React.useState<string>("");
+
+  const { t } = useTranslation();
+  const navigation = useNavigation<NavigationProp<MainStackParamList>>();
 
   const handlePress = React.useCallback(() => {
-    if (onPress) {
-      onPress();
-    }
+    // const userDetails = await Account.fetchAccountDetailsById(item.acc_id);
+    // const securityQuestions = await SecurityQuestion.fetchSecurityQuestionById(
+    //   item.acc_id
+    // );
+    navigation.navigate("details_account", {
+      account_id: item.acc_id,
+    });
   }, [item]);
 
   React.useEffect(() => {
-    FS.getInfoAsync(Icons.resolveImageUri(item.folder, item.icon)).then(
-      (val) => {
+    let d = formatDateToString(new Date(item.acc_addate));
+    setDate(d);
+
+    FileSystem.getInfoAsync(Icons.resolveImageUri(item.folder, item.icon))
+      .then((val) => {
         if (val.exists) {
           setIm(val.uri);
         }
-      }
-    );
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   }, []);
 
   return (
@@ -68,11 +86,11 @@ const AccountElement = ({ item, onPress }: AccountElementType) => {
           <View
             style={[
               ExtendedStyleSheet.defaultStyles.flex_1,
-              ExtendedStyleSheet.defaultStyles.justifyCenter,
+              ExtendedStyleSheet.defaultStyles.justifyStart,
             ]}
           >
             <StyledText textStyle={styles.descriptionLabel}>
-              {item.acc_name}
+              {item.acc_uname}
             </StyledText>
           </View>
           <View
@@ -80,10 +98,11 @@ const AccountElement = ({ item, onPress }: AccountElementType) => {
               ExtendedStyleSheet.defaultStyles.flex_1,
               ExtendedStyleSheet.defaultStyles.row,
               ExtendedStyleSheet.defaultStyles.justifyEnd,
+              ExtendedStyleSheet.defaultStyles.alignCenter,
             ]}
           >
             <StyledText italic textStyle={styles.categoryLabel}>
-              {item.category_fr}
+              {t("screens.digit.added", { x: date })}
             </StyledText>
           </View>
         </View>
@@ -103,8 +122,8 @@ export default AccountElement;
 
 const styles = ExtendedStyleSheet.create({
   touchable: {
-    marginVertical: heightPercentage(1),
-    height: heightPercentage(9),
+    marginVertical: heightPercentage(0.75),
+    height: heightPercentage(10),
     borderRadius: sizes.borderRadius,
     flexDirection: "row",
     backgroundColor: theme.card,
@@ -116,27 +135,27 @@ const styles = ExtendedStyleSheet.create({
   },
   leftIconContainer: {
     ...ExtendedStyleSheet.defaultStyles.center,
-    width: "25%",
-    padding: "3%",
+    width: "22%",
+    padding: "4%",
   },
   labelContainer: {
     flex: 1,
     paddingLeft: widthPercentage(1),
   },
   rightIconContainer: {
-    width: "17%",
+    width: "15%",
     ...ExtendedStyleSheet.defaultStyles.center,
   },
 
   titleLabel: {
-    fontSize: moderateScale(18),
+    fontSize: moderateScale(16),
   },
   descriptionLabel: {
-    fontSize: moderateScale(14),
+    fontSize: moderateScale(13),
     color: theme.dark_gray,
   },
   categoryLabel: {
-    fontSize: moderateScale(13),
+    fontSize: moderateScale(11),
     color: theme.soft_gray,
   },
 });

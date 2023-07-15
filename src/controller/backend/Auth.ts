@@ -37,4 +37,29 @@ export class Auth {
       success: false,
     };
   }
+
+  static async authDigitUser(
+    crypted_digit: string,
+    digit: string,
+    crypt_key: string
+  ) {
+    if (digit.length !== 6) {
+      return {
+        success: false,
+        message: "non-6 chars digit",
+      };
+    }
+
+    const decrypted = decryptString(crypted_digit, crypt_key);
+
+    if (digit === decrypted) {
+      return {
+        success: true,
+      };
+    }
+
+    return {
+      success: false,
+    };
+  }
 }

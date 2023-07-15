@@ -1,11 +1,15 @@
 import { RouteProp } from "@react-navigation/native";
 import { StackScreenProps } from "@react-navigation/stack";
+import { AccountInformationReducedType } from "../controller/types";
 
 type MainStackParamList = {
   auth: undefined;
   reset_pass: undefined;
   home: undefined;
   add_account: undefined;
+  details_account: {
+    account_id: number;
+  };
 };
 
 // with usenavigation

@@ -5,6 +5,7 @@ import {
   ScrollView,
   KeyboardAvoidingView,
   TouchableHighlight,
+  Alert,
 } from "react-native";
 import ExtendedStyleSheet from "../components/styles/ExtendedStyleSheet";
 import theme from "../constants/colors";
@@ -25,11 +26,7 @@ import { useNavigation, NavigationProp } from "@react-navigation/native";
 import { MainStackParamList } from "../navigation/types";
 import AppContainer from "../components/container/AppContainer";
 import AppBar from "../components/appbar/AppBar";
-import {
-  formatPhoneNumber,
-  validateEmail,
-  validateUsername,
-} from "../utils/functions.string";
+import { validateEmail, validateUsername } from "../utils/functions.string";
 import ControlledPicker from "../components/input/ControlledPicker";
 import SocialMedia from "../controller/database/SocialMedia";
 import ControlledIconPicker from "../components/input/ControlledIconPicker";
@@ -42,37 +39,8 @@ import ControlledSecurityQuestion from "../components/input/ControlledSecurityQu
 import SecurityQuestion from "../controller/database/SecurityQuestion";
 import { StateType, useAppDispatch, useAppSelector } from "../config/redux";
 import AccountManagement from "../controller/backend/AccountManagement";
-import { toggleLoadingAction } from "../config/redux/actions";
-
-type CategoryType = {
-  id?: NumberBetweenZeroAndFifteen;
-  value: string;
-  folder: string;
-};
-
-type AccountFormValues = {
-  name: string;
-  username: string;
-  mail: string;
-  phone: string;
-  password: string;
-  token?: string;
-  category: {
-    id?: NumberBetweenZeroAndFifteen;
-    label: string;
-  };
-  platform: {
-    icon: string;
-    id: number;
-    folder?: string;
-    label?: string;
-  };
-  security_question?: {
-    id: number;
-    question?: string;
-    answer?: string;
-  }[];
-};
+import { AccountFormValues, CategoryType } from "./types";
+import { encryptString } from "../config/crypto/crypto";
 
 const inputColor = theme.soft_gray;
 
@@ -105,14 +73,14 @@ const AccountForm = () => {
     control,
   });
   const { user } = useAppSelector<StateType>((state) => state.authReducer);
-  const dispatch = useAppDispatch();
 
   const { category, platform } = watch();
 
   const handleFormSubmit = React.useCallback(
     async (data: AccountFormValues) => {
-      dispatch(toggleLoadingAction(true));
-
+      if (!user) {
+        throw new Error("Should login first");
+      }
       const final_data = {
         account: {
           acc_user: user?.user_id as number,
@@ -120,7 +88,7 @@ const AccountForm = () => {
           acc_uname: data.username,
           acc_mail: data.mail,
           acc_token: data.token,
-          acc_password: data.password,
+          acc_password: encryptString(data.password, user.user_private_key),
           acc_phone: data.phone,
         },
         platform: {
@@ -136,11 +104,11 @@ const AccountForm = () => {
       };
 
       const addAcc = await AccountManagement.addNewAccount(final_data);
-      console.log(addAcc);
-
-      dispatch(toggleLoadingAction(false));
-
-      navigation.navigate("home");
+      if (addAcc) {
+        navigation.navigate("home");
+      } else {
+        console.log("not added");
+      }
     },
     []
   );
@@ -239,7 +207,7 @@ const AccountForm = () => {
       appbar={
         <AppBar
           title={t("screens.new.title")}
-          subtitle={t("screens.new.description")}
+          subtitle={t("screens.new.description").toString()}
           leftIcon={
             <MaterialIcons
               name="arrow-back"
@@ -332,7 +300,6 @@ const AccountForm = () => {
                 rules={{
                   required: false || t("message.errors.required").toString(),
                 }}
-                defaultValue="test_val"
               />
 
               {/* USERNAME */}
@@ -364,7 +331,6 @@ const AccountForm = () => {
                       t("message.errors.username").toString(),
                   },
                 }}
-                defaultValue="test_val"
               />
 
               {/* MAIL */}
@@ -396,7 +362,6 @@ const AccountForm = () => {
                       t("message.errors.username").toString(),
                   },
                 }}
-                defaultValue="test_val@val.val"
               />
 
               {/* PHONE */}
@@ -427,7 +392,6 @@ const AccountForm = () => {
                     message: t("message.errors.phone_number"),
                   },
                 }}
-                defaultValue="0350255522"
               />
 
               {/* PASSWORD */}
@@ -462,7 +426,6 @@ const AccountForm = () => {
                 rules={{
                   required: false || t("message.errors.required").toString(),
                 }}
-                defaultValue="password"
               />
 
               {/* TOKEN */}
@@ -486,7 +449,6 @@ const AccountForm = () => {
                 label={t("common.form.token").toString()}
                 placeholderTextColor={inputColor}
                 showIcon={false}
-                defaultValue="token"
               />
             </View>
             <View style={styles.formContainer}>
@@ -629,7 +591,7 @@ const styles = ExtendedStyleSheet.create({
   formLabel: {
     fontSize: moderateScale(16),
     position: "absolute",
-    top: -heightPercentage(2) / 2,
+    top: -heightPercentage(2.5) / 2,
     backgroundColor: "white",
     marginLeft: hScale(30),
     paddingHorizontal: widthPercentage(1),

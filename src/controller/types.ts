@@ -34,6 +34,23 @@ type AccountInformationType = {
   acc_token: string;
   acc_password: string;
   acc_sm: number;
+  acc_phone: string;
+  acc_addate: Date;
+  icon: string;
+  platform: string;
+  category_id: NumberBetweenZeroAndFifteen;
+  folder: string;
+  category_fr: string;
+  category_eng: string;
+};
+
+type AccountInformationReducedType = {
+  acc_id: number;
+  acc_user: number;
+  acc_name: string;
+  acc_uname: string;
+  acc_addate: Date;
+  acc_sm: number;
   icon: string;
   platform: string;
   category_id: NumberBetweenZeroAndFifteen;
@@ -60,10 +77,11 @@ type NumberBetweenZeroAndFifteen =
   | 14
   | 15;
 
-export {
+export type {
   UserType,
   SMType,
   AccountInformationType,
   SMPlatformType,
   NumberBetweenZeroAndFifteen,
+  AccountInformationReducedType,
 };

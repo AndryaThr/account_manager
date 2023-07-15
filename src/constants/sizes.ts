@@ -6,7 +6,7 @@ const sizes = {
   cardBorderRadius: moderateScale(15),
   roundedRadius: moderateScale(40),
   circleSize: widthPercentage(40),
-  icon: moderateScale(38),
+  icon: moderateScale(35),
   inputIcon: moderateScale(25),
   arrowSize: moderateScale(20),
 

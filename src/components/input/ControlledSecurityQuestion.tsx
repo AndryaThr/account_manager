@@ -52,11 +52,6 @@ function ControlledSecurityQuestion<T extends FieldValues>(
 ) {
   const { t } = useTranslation();
 
-  const { field, fieldState } = useController<T>({
-    control: props.control,
-    name: props.name,
-  });
-
   const handleCrossButtonAction = React.useCallback(() => {
     Alert.alert(
       t("message.delete.title").toString(),
@@ -148,7 +143,7 @@ const inputColor = theme.soft_gray;
 const styles = ExtendedStyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff",
+    backgroundColor: theme.background,
     justifyContent: "center",
     borderRadius: sizes.borderRadius,
     borderWidth: 0.5,
@@ -164,10 +159,12 @@ const styles = ExtendedStyleSheet.create({
     marginBottom: heightPercentage(1),
   },
   input: {
+    minHeight: heightPercentage(7),
     paddingHorizontal: "5%",
     borderRadius: sizes.borderRadius,
     borderWidth: 0.5,
     borderColor: inputColor,
+    paddingVertical: vScale(10),
   },
   inputStyle: {
     fontSize: moderateScale(16),
@@ -176,7 +173,7 @@ const styles = ExtendedStyleSheet.create({
   labelStyle: {
     fontSize: moderateScale(14),
     position: "absolute",
-    top: -vScale(10),
+    top: -vScale(20),
     backgroundColor: "white",
     paddingHorizontal: widthPercentage(1),
     color: inputColor,

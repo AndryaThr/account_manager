@@ -39,4 +39,44 @@ export default class SecurityQuestion {
       });
     });
   }
+
+  static fetchSecurityQuestionById(account_id: number) {
+    const db = Database.database;
+
+    const sq_query = `
+      SELECT * FROM security_question 
+      WHERE account = ?;
+    `;
+
+    if (!db) {
+      throw new Error("Database must be opened before transaction");
+    }
+
+    return new Promise<
+      {
+        id: number;
+        question: string;
+        answer: string;
+      }[]
+    >((resolve, reject) => {
+      db.transaction((tx: SQLite.SQLTransaction) => {
+        tx.executeSql(
+          sq_query,
+          [account_id],
+          (_, res: SQLite.SQLResultSet) => {
+            let results = res.rows._array.map((e) => ({
+              id: e.sq_id,
+              question: e.sq_query,
+              answer: e.sq_answer,
+            }));
+            resolve(results);
+          },
+          (_, err: SQLite.SQLError) => {
+            reject(err);
+            return false;
+          }
+        );
+      });
+    });
+  }
 }

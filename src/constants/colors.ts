@@ -32,6 +32,10 @@ const theme = {
     14: "#341536",
     15: "#375b68",
   },
+
+  transparent: {
+    blue: "#6D72C377",
+  },
 };
 
 export function colorOfCategory(category: NumberBetweenZeroAndFifteen) {

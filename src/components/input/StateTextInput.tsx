@@ -11,7 +11,7 @@ import {
 import sizes from "../../constants/sizes";
 import theme from "../../constants/colors";
 
-type ControlledInputProps = {
+type StateTextInputProps = {
   containerStyle?: ViewStyle;
   style?: ViewStyle;
   labelStyle?: TextStyle;
@@ -29,9 +29,10 @@ type ControlledInputProps = {
   value?: string;
   onChange?: (text: string) => void;
   onBlur?: () => void;
+  disabled?: boolean;
 } & Omit<TextInputProps, "style" | "defaultValue" | "onChange" | "onBlur">;
 
-function StateTextInput(props: ControlledInputProps) {
+function StateTextInput(props: StateTextInputProps) {
   const handleInputChange = React.useCallback(
     (text: string) => {
       if (props.onChange) {
@@ -68,6 +69,7 @@ function StateTextInput(props: ControlledInputProps) {
         multiline={props.multiline}
         numberOfLines={props.multiline ? props.numberOfLines : 1}
         showIcon={props.showIcon}
+        editable={props.disabled}
       />
     </View>
   );

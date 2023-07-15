@@ -1,5 +1,11 @@
 import React from "react";
-import { FlatList, TouchableOpacity, View, RefreshControl } from "react-native";
+import {
+  FlatList,
+  TouchableOpacity,
+  View,
+  RefreshControl,
+  GestureResponderEvent,
+} from "react-native";
 import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import ExtendedStyleSheet from "../components/styles/ExtendedStyleSheet";
 import theme from "../constants/colors";
@@ -23,9 +29,13 @@ import {
 import { MainStackParamList } from "../navigation/types";
 import { userLogoutAction } from "../config/redux/actions";
 import Account from "../controller/database/Account";
-import { AccountInformationType } from "../controller/types";
+import { AccountInformationReducedType } from "../controller/types";
 import Loader from "../components/loader/Loader";
 import AccountElement from "../components/elements/AccountElement";
+import FilterModal from "../components/modals/FilterModal";
+import { FilterModalHandle, SearchFilter } from "../components/types";
+import { FormProvider, useForm } from "react-hook-form";
+import SocialMedia from "../controller/database/SocialMedia";
 
 const HomeScreen = () => {
   const { t } = useTranslation();
@@ -36,10 +46,38 @@ const HomeScreen = () => {
   const username = React.useRef(
     `${user?.user_name} ${user?.user_firstname} / ${user?.user_uname} `
   );
+  const filterModalRef = React.useRef<FilterModalHandle>(null);
 
   const [list, setList] = React.useState<
-    AccountInformationType[] | undefined
+    AccountInformationReducedType[] | undefined
   >();
+  const [categories, setCategories] = React.useState<
+    { id: number; label: string }[] | undefined
+  >();
+
+  const methods = useForm<SearchFilter>({
+    mode: "onChange",
+    defaultValues: {
+      sortKey: "name",
+      sortType: "asc",
+    },
+  });
+
+  const { watch } = methods;
+
+  const { sortKey, sortType, category } = watch();
+
+  const renderedList = React.useMemo(() => {
+    if (!list) {
+      return undefined;
+    }
+
+    if (category == undefined) {
+      return list;
+    }
+
+    return list.filter((e) => e.category_id === category);
+  }, [list, category]);
 
   const logOut = () => dispatch(userLogoutAction());
 
@@ -52,25 +90,43 @@ const HomeScreen = () => {
   }, []);
 
   const handleSortButtonAction = React.useCallback(async () => {
-    console.log("Sort button pressed");
+    filterModalRef.current?.showModal();
   }, []);
+
+  const fetchUserAccounts = React.useCallback(() => {
+    setList(undefined);
+
+    if (user) {
+      Account.fetchAccountsOfUser(user?.user_id, sortKey, sortType)
+        .then((val) => {
+          setList(val);
+        })
+        .catch((err) => {
+          console.log(err);
+          setList([]);
+        });
+    }
+  }, [sortKey, sortType]);
 
   useFocusEffect(
     React.useCallback(() => {
-      setList(undefined);
-
-      if (user) {
-        Account.fetchAccountOfUser(user?.user_id)
-          .then((val) => {
-            setList(val);
-          })
-          .catch((err) => {
-            console.log(err);
-            setList([]);
-          });
-      }
-    }, [])
+      fetchUserAccounts();
+    }, [sortKey, sortType])
   );
+
+  React.useEffect(() => {
+    SocialMedia.fetchSocialMediaCategory()
+      .then((val) => {
+        const tmp: { id: number; label: string }[] = val.map((e) => ({
+          id: e.id,
+          label: e.label_fr,
+        }));
+        setCategories(tmp);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }, []);
 
   return (
     <AppContainer
@@ -124,18 +180,31 @@ const HomeScreen = () => {
           </TouchableOpacity>
         </View>
       </View>
-      {!list ? (
+      {!renderedList || !categories ? (
         <Loader />
-      ) : (
+      ) : renderedList.length > 0 ? (
         <FlatList
-          data={list}
+          data={renderedList}
           renderItem={({ item }) => {
             return <AccountElement item={item} />;
           }}
           showsVerticalScrollIndicator={false}
           contentContainerStyle={styles.flatlist}
-          refreshControl={<RefreshControl refreshing />}
         />
+      ) : (
+        <View
+          style={[
+            ExtendedStyleSheet.defaultStyles.flex_1,
+            ExtendedStyleSheet.defaultStyles.center,
+          ]}
+        >
+          <StyledText>{t("common.nothing")}</StyledText>
+        </View>
+      )}
+      {categories && (
+        <FormProvider {...methods}>
+          <FilterModal ref={filterModalRef} categories={categories} />
+        </FormProvider>
       )}
     </AppContainer>
   );
@@ -153,7 +222,7 @@ const styles = ExtendedStyleSheet.create({
     justifyContent: "space-between",
   },
   cardTitle: {
-    fontSize: moderateScale(16),
+    fontSize: moderateScale(14),
     color: theme.dark_gray,
     marginHorizontal: widthPercentage(2),
   },

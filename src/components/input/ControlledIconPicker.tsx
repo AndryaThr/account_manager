@@ -291,9 +291,9 @@ const styles = ExtendedStyleSheet.create({
     overflow: "visible",
   },
   iconLabel: {
-    fontSize: moderateScale(12),
+    fontSize: moderateScale(11),
     position: "absolute",
-    bottom: -heightPercentage(1.5),
+    bottom: -heightPercentage(1.75),
   },
 
   /* modal */
