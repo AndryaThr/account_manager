@@ -14,12 +14,11 @@ import {
 } from "../utils/functions.dimensions";
 import { useForm } from "react-hook-form";
 import ControlledInput from "../components/input/ControlledInput";
-import { MaterialIcons, Ionicons } from "@expo/vector-icons";
+import { MaterialIcons, Ionicons, FontAwesome } from "@expo/vector-icons";
 import { validateUsername } from "../utils/functions.string";
 import { Auth } from "../controller/backend/Auth";
 import Loader from "../components/loader/Loader";
 import { useAppDispatch } from "../config/redux";
-import { userLoginAction } from "../config/redux/actions";
 import {
   useNavigation,
   NavigationProp,
@@ -31,14 +30,19 @@ import AppBar from "../components/appbar/AppBar";
 import User from "../controller/database/User";
 
 type LoginFormValues = {
-  username: string;
+  name: string;
+  first_name: string;
   password: string;
+  confirm_password: string;
+  private_key: string;
 };
 
 const inputColor = theme.soft_gray;
 
-const AuthScreen = () => {
+const CreateUser = () => {
   const [showSecuredText, setShowSecuredText] = React.useState<boolean>(false);
+  const [showSecuredTextConfirmation, setShowSecuredTextConfirmation] =
+    React.useState<boolean>(false);
   const [loading, setLoading] = React.useState<boolean>(false);
   const [error, setError] = React.useState<string | null | undefined>(
     undefined
@@ -52,30 +56,14 @@ const AuthScreen = () => {
     mode: "onSubmit",
   });
 
-  const handleAuth = React.useCallback(async (data: LoginFormValues) => {
-    setLoading(true);
-    setError(null);
-
-    try {
-      let username = data.username;
-      let password = data.password;
-
-      const auth = await Auth.authUser(username, password);
-      if (auth.success) {
-        dispatch(userLoginAction(auth.data));
-      } else {
-        setError(t("message.errors.login_error").toString());
-      }
-    } catch (error) {
-      console.log("error : ", JSON.stringify(error, null, 4));
-      setError(t("message.error").toString());
-    } finally {
-      setLoading(false);
-    }
-  }, []);
+  const handleAuth = React.useCallback(async (data: LoginFormValues) => {}, []);
 
   const handleShowPasswordAction = React.useCallback(() => {
     setShowSecuredText((p) => !p);
+  }, []);
+
+  const handleShowPasswordConfirmationAction = React.useCallback(() => {
+    setShowSecuredTextConfirmation((p) => !p);
   }, []);
 
   const handleForgetPasswordAction = React.useCallback(() => {
@@ -98,8 +86,8 @@ const AuthScreen = () => {
     <AppContainer
       appbar={
         <AppBar
-          title={t("common.app_title").toString()}
-          subtitle={t("common.app_description").toString()}
+          title={t("screens.create.title").toString()}
+          subtitle={t("screens.create.subtitle").toString()}
         />
       }
       height={heightPercentage(85)}
@@ -107,14 +95,14 @@ const AuthScreen = () => {
       <View>
         <View style={styles.cardTitleContainer}>
           <StyledText textStyle={styles.cardTitle} weight="5">
-            {t("screens.auth.welcome")}
+            {t("screens.create.welcome")}
           </StyledText>
           <StyledText textStyle={styles.cardTitleDescription} weight="3">
-            {t("screens.auth.welcome_description")}
+            {t("screens.create.welcome_description")}
           </StyledText>
         </View>
         <ControlledInput
-          name={"username"}
+          name={"name"}
           control={control}
           leftIcon={() => (
             <MaterialIcons name="person" size={25} color={inputColor} />
@@ -125,19 +113,33 @@ const AuthScreen = () => {
           labelStyle={styles.labelStyle}
           placeholderStyle={styles.placeholderStyle}
           textErrorStyle={styles.textErrorStyle}
-          placeholder={t("screens.auth.username").toString()}
-          label={t("screens.auth.username").toString()}
+          placeholder={t("common.form.name").toString()}
+          label={t("common.form.name").toString()}
           placeholderTextColor={inputColor}
           showIcon={false}
           rules={{
             required: true || t("message.errors.required").toString(),
-            validate: {
-              invalid: (str) =>
-                validateUsername(str) ||
-                t("message.errors.username").toString(),
-            },
           }}
-          defaultValue="andrya.thr"
+        />
+        <ControlledInput
+          name={"first_name"}
+          control={control}
+          leftIcon={() => (
+            <MaterialIcons name="person" size={25} color={inputColor} />
+          )}
+          containerStyle={styles.containerStyle}
+          style={styles.input}
+          inputStyle={styles.inputStyle}
+          labelStyle={styles.labelStyle}
+          placeholderStyle={styles.placeholderStyle}
+          textErrorStyle={styles.textErrorStyle}
+          placeholder={t("common.form.firstname").toString()}
+          label={t("common.form.firstname").toString()}
+          placeholderTextColor={inputColor}
+          showIcon={false}
+          rules={{
+            required: true || t("message.errors.required").toString(),
+          }}
         />
         <ControlledInput
           name={"password"}
@@ -166,18 +168,57 @@ const AuthScreen = () => {
           rules={{
             required: true || t("message.errors.required").toString(),
           }}
-          defaultValue="password"
         />
-        <View style={styles.forgetPassContainer}>
-          <StyledText
-            onPress={handleForgetPasswordAction}
-            textStyle={styles.forgetPassLabel}
-            weight="4"
-            italic
-          >
-            {t("screens.auth.forget_pass")}
-          </StyledText>
-        </View>
+        <ControlledInput
+          name={"confirm_password"}
+          control={control}
+          leftIcon={() => (
+            <MaterialIcons name="done-all" size={25} color={inputColor} />
+          )}
+          rightIcon={() => (
+            <Ionicons
+              name={showSecuredText ? "eye" : "eye-off"}
+              size={25}
+              color={inputColor}
+              onPress={handleShowPasswordAction}
+            />
+          )}
+          containerStyle={styles.containerStyle}
+          style={styles.input}
+          inputStyle={styles.inputStyle}
+          labelStyle={styles.labelStyle}
+          placeholderStyle={styles.placeholderStyle}
+          textErrorStyle={styles.textErrorStyle}
+          placeholder={t("common.form.confirm_pass").toString()}
+          label={t("common.form.confirm_pass").toString()}
+          placeholderTextColor={inputColor}
+          secureTextEntry={!showSecuredText}
+          rules={{
+            required: true || t("message.errors.required").toString(),
+          }}
+        />
+        <ControlledInput
+          name={"private_key"}
+          control={control}
+          leftIcon={() => (
+            <MaterialIcons name="shield" size={25} color={inputColor} />
+          )}
+          rightIcon={() => (
+            <FontAwesome name="random" size={25} color={inputColor} />
+          )}
+          containerStyle={styles.containerStyle}
+          style={styles.input}
+          inputStyle={styles.inputStyle}
+          labelStyle={styles.labelStyle}
+          placeholderStyle={styles.placeholderStyle}
+          textErrorStyle={styles.textErrorStyle}
+          placeholder={t("common.form.private_key").toString()}
+          label={t("common.form.private_key").toString()}
+          placeholderTextColor={inputColor}
+          rules={{
+            required: true || t("message.errors.required").toString(),
+          }}
+        />
         <TouchableNativeFeedback onPress={handleSubmit(handleAuth)}>
           <View style={styles.pressableButton}>
             <StyledText weight="4" textStyle={styles.pressableButtonLabel}>
@@ -194,17 +235,11 @@ const AuthScreen = () => {
         )}
       </View>
       {loading && <Loader color={theme.error} />}
-
-      <View style={styles.createAccountContainer}>
-        <StyledText textStyle={styles.createAccountLabel}>
-          {t("screens.auth.create_account")}
-        </StyledText>
-      </View>
     </AppContainer>
   );
 };
 
-export default AuthScreen;
+export default CreateUser;
 
 const styles = ExtendedStyleSheet.create({
   /* input */
@@ -213,7 +248,7 @@ const styles = ExtendedStyleSheet.create({
     marginBottom: heightPercentage(1),
   },
   input: {
-    height: vScale(62),
+    height: vScale(60),
     paddingHorizontal: hScale(12),
     borderRadius: sizes.borderRadius,
     borderWidth: 0.5,
@@ -247,11 +282,11 @@ const styles = ExtendedStyleSheet.create({
     paddingTop: heightPercentage(4),
   },
   cardTitle: {
-    fontSize: moderateScale(25),
+    fontSize: moderateScale(20),
     color: theme.purple,
   },
   cardTitleDescription: {
-    fontSize: moderateScale(16),
+    fontSize: moderateScale(14),
   },
 
   /* button */

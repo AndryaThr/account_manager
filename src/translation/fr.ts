@@ -6,7 +6,7 @@ const fr = {
     default: "Par défaut",
     all: "Toutes les catégories",
     category_order: "Catégorie",
-    date: "Date d'ajout",
+    date: "Dernière date de modification",
     button: {
       new: "Ajouter",
       login: "Se connecter",
@@ -19,6 +19,8 @@ const fr = {
       clear: "Effacer",
       reset: "Réinitialiser",
       clear_filter: "Effacer le filtre",
+      delete: "Supprimer",
+      modify: "Modifier",
     },
     form: {
       name: "Nom",
@@ -39,6 +41,7 @@ const fr = {
       answer: "Réponse",
       placeholder_query: "Question de sécurité ...",
       placeholder_answer: "Réponse correspondante ...",
+      private_key: "Clé de sécurité",
     },
     explication_token:
       "Les jetons d'authentification (token) fonctionnent à la manière d'un ticket d'entrée à validité limitée : ils accordent un accès en continu pendant leur durée de validité. Dès que l'utilisateur se déconnecte ou quitte l'application, le jeton est invalidé.",
@@ -52,10 +55,17 @@ const fr = {
     errors: {
       required: "Champ requis",
       username:
-        "5 à 20 caractères alphanumériques, caractères spéciaux non supportés",
+        "5 caractères alphanumériques minimum, caractères spéciaux non supportés",
+      mail: "Adresse mail non valide",
       login_error: "Utilisateur ou mot de passe invalide",
       phone_number: "Caractères reconnus: 0 ~ 9, 8 caractères minimum",
       ph_length: "Un numéro téléphone comporte au moins 10 chiffres",
+    },
+    err_message: {
+      err_insert: "Erreur de création",
+      err_update: "Erreur de modification",
+      err_insert_desc: "Vérifiez les informations saisies avant de valider",
+      err_update_desc: "Vérifiez les informations saisies avant de valider",
     },
     delete: {
       title: "Confirmer suppression",
@@ -110,6 +120,18 @@ const fr = {
       title: "Détails d'un compte",
       description: "Informations du compte",
       sq_description: "Pas de question de sécurité enregistrée pour ce compte",
+    },
+    edit: {
+      title: "Modification d'informations",
+      subtitle: "Mettez à jour les informations sur votre compte",
+    },
+    create: {
+      title: "Nouvel utilisateur",
+      subtitle:
+        "Ces informations sont nécessaires pour sécuriser l'application",
+      welcome: "Qui êtes vous ?",
+      welcome_description:
+        "Pour utiliser cette application, veuillez remplir ces champs",
     },
   },
 };

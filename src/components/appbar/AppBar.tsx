@@ -78,7 +78,7 @@ const AppBar = ({
         <View
           style={[
             ExtendedStyleSheet.defaultStyles.flex_1,
-            styles.appActionContainer,
+            styles.appBarContainer,
           ]}
         >
           {leftIcon && (
@@ -110,41 +110,46 @@ const AppBar = ({
             </TouchableNativeFeedback>
           )}
         </View>
-        <View
-          style={[
-            ExtendedStyleSheet.defaultStyles.flex_2,
-            styles.appActionContainer,
-          ]}
-        >
-          {description && (
-            <View style={styles.appActionLeftContainer}>
-              {description && (
-                <StyledText weight="4" textStyle={styles.appActionLeftTitle}>
-                  {description}
-                </StyledText>
-              )}
-              {subdescription && (
-                <StyledText weight="3" textStyle={styles.appActionLeftSubtitle}>
-                  {subdescription}
-                </StyledText>
-              )}
-            </View>
-          )}
-          {buttonLabel && (
-            <View style={styles.appActionRightContainer}>
-              <TouchableNativeFeedback onPress={buttonPressAction}>
-                <View style={styles.appActionLeftButton}>
-                  <StyledText
-                    weight="4"
-                    textStyle={styles.appActionLeftButtonLabel}
-                  >
-                    {buttonLabel}
+        {description && (
+          <View
+            style={[
+              ExtendedStyleSheet.defaultStyles.flex_2,
+              styles.appActionContainer,
+            ]}
+          >
+            {description && (
+              <View style={styles.appActionLeftContainer}>
+                {description && (
+                  <StyledText weight="4" textStyle={styles.appActionLeftTitle}>
+                    {description}
                   </StyledText>
-                </View>
-              </TouchableNativeFeedback>
-            </View>
-          )}
-        </View>
+                )}
+                {subdescription && (
+                  <StyledText
+                    weight="3"
+                    textStyle={styles.appActionLeftSubtitle}
+                  >
+                    {subdescription}
+                  </StyledText>
+                )}
+              </View>
+            )}
+            {buttonLabel && (
+              <View style={styles.appActionRightContainer}>
+                <TouchableNativeFeedback onPress={buttonPressAction}>
+                  <View style={styles.appActionLeftButton}>
+                    <StyledText
+                      weight="4"
+                      textStyle={styles.appActionLeftButtonLabel}
+                    >
+                      {buttonLabel}
+                    </StyledText>
+                  </View>
+                </TouchableNativeFeedback>
+              </View>
+            )}
+          </View>
+        )}
       </View>
     </View>
   );
@@ -184,7 +189,8 @@ const styles = ExtendedStyleSheet.create({
   /* title */
   appTitleMainContainer: {
     paddingHorizontal: widthPercentage(5),
-    marginTop: heightPercentage(1),
+    paddingTop: heightPercentage(1),
+    ...ExtendedStyleSheet.defaultStyles.center,
   },
   appTitleContainer: {
     alignItems: "center",
@@ -195,6 +201,11 @@ const styles = ExtendedStyleSheet.create({
     justifyContent: "space-between",
     alignItems: "stretch",
   },
+  appBarContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
   appTitleLabel: {
     fontSize: moderateScale(20),
     color: theme.text,
@@ -202,6 +213,7 @@ const styles = ExtendedStyleSheet.create({
   appDescriptionLabel: {
     fontSize: moderateScale(14),
     color: theme.text,
+    textAlign: "center",
   },
 
   /* icon container */

@@ -82,7 +82,10 @@ const HomeScreen = () => {
   const logOut = () => dispatch(userLogoutAction());
 
   const handleAddButtonAction = React.useCallback(() => {
-    navigation.navigate("add_account");
+    navigation.navigate("add_account", {
+      title: t("screens.new.title").toString(),
+      subtitle: t("screens.new.description").toString(),
+    });
   }, []);
 
   const handleLogOutButtonAction = React.useCallback(async () => {

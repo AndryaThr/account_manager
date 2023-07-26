@@ -10,7 +10,6 @@ import {
   TextProps,
 } from "react-native";
 import ExtendedStyleSheet from "../styles/ExtendedStyleSheet";
-import { TextInput } from "react-native-element-textinput";
 import {
   hScale,
   heightPercentage,
@@ -21,6 +20,7 @@ import {
 import sizes from "../../constants/sizes";
 import theme from "../../constants/colors";
 import StyledText from "../texts/StyledText";
+import { t } from "i18next";
 
 type FieldViewProps = {
   label?: string;
@@ -85,7 +85,11 @@ function FieldView(props: FieldViewProps) {
             textStyle={styles.inputStyle}
             selectable={hiddenDefault ? false : selectatbleDefault}
           >
-            {!hiddenDefault ? props.value : "****************"}
+            {props?.value
+              ? !hiddenDefault
+                ? props.value
+                : "****************"
+              : t("common.undefined")}
           </StyledText>
         </View>
         {props.rightIcon && (

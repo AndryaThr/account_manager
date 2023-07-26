@@ -13,10 +13,10 @@ const validateUsername = (username?: any) => {
   }
 
   const minLength = 4;
-  const maxLength = 20;
+  const maxLength = 20; //  || username.length > maxLength
   const allowedCharacters = /^[a-zA-Z0-9_.-]+$/;
 
-  if (!username || username.length < minLength || username.length > maxLength) {
+  if (!username || username.length < minLength) {
     return false;
   }
 

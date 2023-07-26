@@ -60,61 +60,68 @@ const AccountElement = ({ item }: AccountElementType) => {
   }, []);
 
   return (
-    <TouchableOpacity onPress={handlePress}>
-      <View
-        style={[
-          styles.touchable,
-          {
-            borderLeftColor: colorOfCategory(item.category_id),
-          },
-        ]}
+    <>
+      <TouchableOpacity
+        onPress={handlePress}
+        onLongPress={() => {
+          console.log("hello");
+        }}
       >
-        <View style={styles.leftIconContainer}>
-          <IconDisplay icon_path={im} />
-        </View>
-        <View style={styles.labelContainer}>
-          <View
-            style={[
-              ExtendedStyleSheet.defaultStyles.flex_1,
-              ExtendedStyleSheet.defaultStyles.justifyEnd,
-            ]}
-          >
-            <StyledText weight="4" textStyle={styles.titleLabel}>
-              {item.platform}
-            </StyledText>
+        <View
+          style={[
+            styles.touchable,
+            {
+              borderLeftColor: colorOfCategory(item.category_id),
+            },
+          ]}
+        >
+          <View style={styles.leftIconContainer}>
+            <IconDisplay icon_path={im} />
           </View>
-          <View
-            style={[
-              ExtendedStyleSheet.defaultStyles.flex_1,
-              ExtendedStyleSheet.defaultStyles.justifyStart,
-            ]}
-          >
-            <StyledText textStyle={styles.descriptionLabel}>
-              {item.acc_uname}
-            </StyledText>
+          <View style={styles.labelContainer}>
+            <View
+              style={[
+                ExtendedStyleSheet.defaultStyles.flex_1,
+                ExtendedStyleSheet.defaultStyles.justifyEnd,
+              ]}
+            >
+              <StyledText weight="4" textStyle={styles.titleLabel}>
+                {item.platform}
+              </StyledText>
+            </View>
+            <View
+              style={[
+                ExtendedStyleSheet.defaultStyles.flex_1,
+                ExtendedStyleSheet.defaultStyles.justifyStart,
+              ]}
+            >
+              <StyledText textStyle={styles.descriptionLabel}>
+                {item.acc_uname}
+              </StyledText>
+            </View>
+            <View
+              style={[
+                ExtendedStyleSheet.defaultStyles.flex_1,
+                ExtendedStyleSheet.defaultStyles.row,
+                ExtendedStyleSheet.defaultStyles.justifyEnd,
+                ExtendedStyleSheet.defaultStyles.alignCenter,
+              ]}
+            >
+              <StyledText italic textStyle={styles.categoryLabel}>
+                {t("screens.digit.added", { x: date })}
+              </StyledText>
+            </View>
           </View>
-          <View
-            style={[
-              ExtendedStyleSheet.defaultStyles.flex_1,
-              ExtendedStyleSheet.defaultStyles.row,
-              ExtendedStyleSheet.defaultStyles.justifyEnd,
-              ExtendedStyleSheet.defaultStyles.alignCenter,
-            ]}
-          >
-            <StyledText italic textStyle={styles.categoryLabel}>
-              {t("screens.digit.added", { x: date })}
-            </StyledText>
+          <View style={styles.rightIconContainer}>
+            <MaterialIcons
+              name="arrow-forward-ios"
+              size={sizes.arrowSize}
+              color={theme.purple}
+            />
           </View>
         </View>
-        <View style={styles.rightIconContainer}>
-          <MaterialIcons
-            name="arrow-forward-ios"
-            size={sizes.arrowSize}
-            color={theme.purple}
-          />
-        </View>
-      </View>
-    </TouchableOpacity>
+      </TouchableOpacity>
+    </>
   );
 };
 

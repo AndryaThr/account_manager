@@ -30,6 +30,34 @@ export default class User {
     });
   }
 
+  static verifyTable() {
+    const db = Database.database;
+    const query = `
+      SELECT 1 FROM user;
+    `;
+
+    if (!db) {
+      throw new Error("Database must be opened before transaction");
+    }
+
+    return new Promise<boolean>((resolve, reject) => {
+      db.transaction((tx: SQLite.SQLTransaction) => {
+        tx.executeSql(
+          query,
+          [],
+          (_, res: SQLite.SQLResultSet) => {
+            if (res.rows.length > 0) resolve(true);
+            else resolve(false);
+          },
+          (_, err: SQLite.SQLError) => {
+            reject(false);
+            return false;
+          }
+        );
+      });
+    });
+  }
+
   static readOne(username: string) {
     const db = Database.database;
     const query = `

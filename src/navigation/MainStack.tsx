@@ -7,6 +7,8 @@ import ForgetPassword from "../screens/ForgetPassword";
 import { MainStackParamList } from "./types";
 import AccountForm from "../screens/AccountForm";
 import AccountDetails from "../screens/AccountDetails";
+import ProtectedAction from "../screens/ProtectedAction";
+import CreateUser from "../screens/CreateUser";
 
 const Stack = createStackNavigator<MainStackParamList>();
 
@@ -25,6 +27,7 @@ const MainStack = () => {
         <Stack.Group>
           <Stack.Screen name="auth" component={AuthScreen} />
           <Stack.Screen name="reset_pass" component={ForgetPassword} />
+          <Stack.Screen name="create_user" component={CreateUser} />
         </Stack.Group>
       ) : (
         <Stack.Group>
@@ -33,6 +36,7 @@ const MainStack = () => {
           <Stack.Screen name="details_account" component={AccountDetails} />
         </Stack.Group>
       )}
+      <Stack.Screen name="protected_action" component={ProtectedAction} />
     </Stack.Navigator>
   );
 };

@@ -19,6 +19,7 @@ import {
 } from "@expo/vector-icons";
 import {
   NavigationProp,
+  useFocusEffect,
   useNavigation,
   useRoute,
 } from "@react-navigation/native";
@@ -37,30 +38,9 @@ import IconDisplay from "../components/image/IconDisplay";
 import SecurityQuestionView from "../components/elements/SecurityQuestionView";
 import { decryptString } from "../config/crypto/crypto";
 import { StateType, useAppSelector } from "../config/redux";
-
-export type DataType = {
-  acc_id: number;
-  acc_user: number;
-  acc_name: string;
-  acc_uname: string;
-  acc_mail?: string;
-  acc_token?: string;
-  acc_password: string;
-  acc_sm: number;
-  acc_phone?: string;
-  acc_addate: string;
-  icon: string;
-  platform: string;
-  category_id: number;
-  folder: string;
-  category_fr: string;
-  category_eng: string;
-  security_questions?: {
-    id: number;
-    question: string;
-    answer: string;
-  }[];
-};
+import { AccountFormValues, DataType } from "./types";
+import { NumberBetweenZeroAndFifteen } from "../controller/types";
+import AccountManagement from "../controller/backend/AccountManagement";
 
 const inputColor = theme.soft_gray;
 const fabSize = moderateScale(65);
@@ -86,10 +66,6 @@ const AccountDetails = () => {
         ...account,
         acc_addate: `${addate.toLocaleDateString()}, ${addate.toLocaleTimeString()}`,
         icon: Icons.resolveImageUri(account.folder, account.icon),
-        acc_password: decryptString(
-          account.acc_password,
-          user?.user_private_key as string
-        ),
         security_questions: securityQuestions,
       };
 
@@ -107,16 +83,56 @@ const AccountDetails = () => {
     []
   );
 
-  useEffect(() => {
-    fetchAccountInformation()
-      .then((val) => {
-        setData(val);
-      })
-      .catch((err) => {
-        console.log(err);
-      })
-      .finally(() => {});
-  }, []);
+  const handleModifyButtonAction = React.useCallback(() => {
+    if (data) {
+      const params: AccountFormValues = {
+        name: data.acc_name,
+        username: data.acc_uname,
+        mail: data.acc_mail as string,
+        phone: data.acc_phone as string,
+        password: data.acc_password,
+        token: data?.acc_token ?? t("common.undefined").toString(),
+        category: {
+          id: data.category_id as NumberBetweenZeroAndFifteen,
+          label: data.category_fr,
+        },
+        platform: {
+          icon: data.icon,
+          id: data.acc_sm,
+          folder: data.folder,
+          label: data.platform,
+        },
+        security_question: data.security_questions,
+      };
+
+      navigation.navigate("add_account", {
+        title: t("screens.edit.title").toString(),
+        subtitle: t("screens.edit.subtitle").toString(),
+        account_id: data.acc_id,
+        account_info: params,
+      });
+    }
+  }, [data]);
+
+  const handleDeleteButtonAction = React.useCallback(async () => {
+    const sq_list = data?.security_questions?.map((e) => e.id) ?? [];
+    await AccountManagement.deleteAccount(params.account_id, sq_list);
+
+    navigation.navigate("home");
+  }, [data]);
+
+  useFocusEffect(
+    useCallback(() => {
+      fetchAccountInformation()
+        .then((val) => {
+          setData(val);
+        })
+        .catch((err) => {
+          console.log(err);
+        })
+        .finally(() => {});
+    }, [])
+  );
 
   return (
     <ProtectedContainer
@@ -135,17 +151,17 @@ const AccountDetails = () => {
       }
       height={heightPercentage(87)}
       paddingHorizontalPercentage={5}
-      floatingButton={
-        <TouchableOpacity>
-          <View style={styles.fab}>
-            <MaterialIcons
-              name="edit"
-              color={theme.text}
-              size={moderateScale(30)}
-            />
-          </View>
-        </TouchableOpacity>
-      }
+      // floatingButton={
+      //   <TouchableOpacity onPress={handleFabAction}>
+      //     <View style={styles.fab}>
+      //       <MaterialIcons
+      //         name="edit"
+      //         color={theme.text}
+      //         size={moderateScale(30)}
+      //       />
+      //     </View>
+      //   </TouchableOpacity>
+      // }
     >
       {!data ? (
         <Loader />
@@ -248,7 +264,10 @@ const AccountDetails = () => {
               />
               <FieldView
                 label={t("common.form.password").toString()}
-                value={data.acc_password}
+                value={decryptString(
+                  data.acc_password,
+                  user?.user_private_key as string
+                )}
                 hidden={!showSecuredText}
                 leftIcon={
                   <MaterialIcons
@@ -280,11 +299,13 @@ const AccountDetails = () => {
                   />
                 }
                 rightIcon={
-                  <Ionicons
-                    name={showToken ? "eye" : "eye-off"}
-                    size={sizes.inputIcon}
-                    color={inputColor}
-                  />
+                  data?.acc_token && (
+                    <Ionicons
+                      name={showToken ? "eye" : "eye-off"}
+                      size={sizes.inputIcon}
+                      color={inputColor}
+                    />
+                  )
                 }
                 onRightIconPress={() =>
                   handleShowSecuredTextAction(setShowToken)
@@ -314,6 +335,46 @@ const AccountDetails = () => {
                 </View>
               )}
             </View>
+          </View>
+          <View style={styles.bottomButtonContainer}>
+            <TouchableOpacity onPress={handleModifyButtonAction}>
+              <View
+                style={[
+                  styles.bottomButton,
+                  {
+                    backgroundColor: theme.purple,
+                  },
+                ]}
+              >
+                <MaterialIcons
+                  name="edit"
+                  color={theme.text}
+                  size={moderateScale(20)}
+                />
+                <StyledText weight="4" textStyle={styles.bottomButtonLabel}>
+                  {t("common.button.modify")}
+                </StyledText>
+              </View>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={handleDeleteButtonAction}>
+              <View
+                style={[
+                  styles.bottomButton,
+                  {
+                    backgroundColor: theme.error,
+                  },
+                ]}
+              >
+                <MaterialIcons
+                  name="delete"
+                  color={theme.text}
+                  size={moderateScale(20)}
+                />
+                <StyledText weight="4" textStyle={styles.bottomButtonLabel}>
+                  {t("common.button.delete")}
+                </StyledText>
+              </View>
+            </TouchableOpacity>
           </View>
         </ScrollView>
       )}
@@ -404,5 +465,26 @@ const styles = ExtendedStyleSheet.create({
     backgroundColor: theme.purple,
     elevation: 2,
     ...ExtendedStyleSheet.defaultStyles.center,
+  },
+
+  bottomButtonContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-evenly",
+    flex: 1,
+    height: hScale(50),
+    marginTop: heightPercentage(1),
+  },
+  bottomButton: {
+    ...ExtendedStyleSheet.defaultStyles.alignCenter,
+    flex: 1,
+    borderRadius: sizes.borderRadius,
+    paddingHorizontal: "6%",
+    flexDirection: "row",
+    justifyContent: "space-evenly",
+  },
+  bottomButtonLabel: {
+    color: theme.text,
+    fontSize: moderateScale(14),
   },
 });

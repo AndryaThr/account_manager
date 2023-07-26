@@ -2,5 +2,10 @@ default user: John Doe
 pass: password
 digit: 123456
 
-bcrypt config:
-  salt: 12
+1	
+andrya 
+thr	
+andrya.thr	
+U2FsdGVkX18XS9uLpCeErl7ZuUkzHhTfe9eWovNu83g=	
+U2FsdGVkX1+tn2F5O4dMKCQyB29EP+t5GonD0qFErEQ=	
+private-key

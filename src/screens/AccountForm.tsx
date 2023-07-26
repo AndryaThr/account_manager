@@ -22,8 +22,16 @@ import {
 import { useFieldArray, useForm } from "react-hook-form";
 import ControlledInput from "../components/input/ControlledInput";
 import { MaterialIcons, Ionicons } from "@expo/vector-icons";
-import { useNavigation, NavigationProp } from "@react-navigation/native";
-import { MainStackParamList } from "../navigation/types";
+import {
+  useNavigation,
+  NavigationProp,
+  useRoute,
+  useFocusEffect,
+} from "@react-navigation/native";
+import {
+  MainStackParamList,
+  MainStackScreenRouteProp,
+} from "../navigation/types";
 import AppContainer from "../components/container/AppContainer";
 import AppBar from "../components/appbar/AppBar";
 import { validateEmail, validateUsername } from "../utils/functions.string";
@@ -36,11 +44,11 @@ import { findInObject } from "../utils/functions.objects";
 import Loader from "../components/loader/Loader";
 import { icon_path } from "../constants/paths";
 import ControlledSecurityQuestion from "../components/input/ControlledSecurityQuestion";
-import SecurityQuestion from "../controller/database/SecurityQuestion";
 import { StateType, useAppDispatch, useAppSelector } from "../config/redux";
 import AccountManagement from "../controller/backend/AccountManagement";
 import { AccountFormValues, CategoryType } from "./types";
-import { encryptString } from "../config/crypto/crypto";
+import { decryptString, encryptString } from "../config/crypto/crypto";
+import ProtectedContainer from "../components/container/ProtectedContainer";
 
 const inputColor = theme.soft_gray;
 
@@ -55,24 +63,34 @@ const AccountForm = () => {
     }[]
   >([]);
 
+  const { params } = useRoute<MainStackScreenRouteProp<"add_account">>();
+  const { user } = useAppSelector<StateType>((state) => state.authReducer);
+
   const { t } = useTranslation();
   const navigation = useNavigation<NavigationProp<MainStackParamList>>();
 
   const { control, handleSubmit, watch, setValue } = useForm<AccountFormValues>(
     {
       mode: "onSubmit",
-      defaultValues: {
-        platform: {
-          icon: Icons.resolveImageUri("00", "Default.png"),
-        },
-      },
+      defaultValues: params.account_info
+        ? {
+            ...params.account_info,
+            password: decryptString(
+              params.account_info.password,
+              user?.user_private_key as string
+            ),
+          }
+        : {
+            platform: {
+              icon: Icons.resolveImageUri("00", "Default.png"),
+            },
+          },
     }
   );
   const { fields, append, remove } = useFieldArray({
     name: "security_question",
     control,
   });
-  const { user } = useAppSelector<StateType>((state) => state.authReducer);
 
   const { category, platform } = watch();
 
@@ -81,6 +99,7 @@ const AccountForm = () => {
       if (!user) {
         throw new Error("Should login first");
       }
+
       const final_data = {
         account: {
           acc_user: user?.user_id as number,
@@ -103,11 +122,49 @@ const AccountForm = () => {
           })) ?? [],
       };
 
-      const addAcc = await AccountManagement.addNewAccount(final_data);
-      if (addAcc) {
-        navigation.navigate("home");
+      if (params?.account_id) {
+        const modifAcc = await AccountManagement.updateExistingAccount(
+          final_data,
+          params.account_id,
+          params.account_info?.security_question?.map((e) => e.id) ?? []
+        );
+
+        if (modifAcc) {
+          navigation.goBack();
+        } else {
+          Alert.alert(
+            t("common.message.err_message.err_update").toString(),
+            t("common.message.err_message.err_update_desc").toString(),
+            [
+              {
+                text: "ok",
+                style: "cancel",
+              },
+            ],
+            {
+              cancelable: true,
+            }
+          );
+        }
       } else {
-        console.log("not added");
+        const addAcc = await AccountManagement.addNewAccount(final_data);
+        if (addAcc) {
+          navigation.navigate("home");
+        } else {
+          Alert.alert(
+            t("common.message.err_message.err_insert").toString(),
+            t("common.message.err_message.err_insert_desc").toString(),
+            [
+              {
+                text: "ok",
+                style: "cancel",
+              },
+            ],
+            {
+              cancelable: true,
+            }
+          );
+        }
       }
     },
     []
@@ -162,8 +219,8 @@ const AccountForm = () => {
 
   useEffect(() => {
     SocialMedia.fetchSocialMediaCategory()
-      .then((value) => {
-        let final: CategoryType[] = value.map((e) => ({
+      .then((smCategories) => {
+        let final: CategoryType[] = smCategories.map((e) => ({
           id: e.id as NumberBetweenZeroAndFifteen,
           value: e.label_fr,
           folder: e.folder,
@@ -185,29 +242,35 @@ const AccountForm = () => {
   }, []);
 
   useEffect(() => {
-    if (platform?.folder) {
-      let currentCategory = findInObject(categories, "folder", platform.folder);
-      if (currentCategory) {
-        setValue("category", {
-          id: currentCategory.id,
-          label: currentCategory.value,
-        });
-      } else {
-        console.warn("cannot resolve folder ", platform.folder);
-        setValue("category", {
-          id: categories[0].id,
-          label: categories[0].value,
-        });
+    if (categories.length > 0) {
+      if (platform?.folder) {
+        let currentCategory = findInObject(
+          categories,
+          "folder",
+          platform.folder
+        );
+        if (currentCategory) {
+          setValue("category", {
+            id: currentCategory.id,
+            label: currentCategory.value,
+          });
+        } else {
+          console.warn("cannot resolve folder ", platform.folder);
+          setValue("category", {
+            id: categories[0].id,
+            label: categories[0].value,
+          });
+        }
       }
     }
   }, [platform.folder, categories]);
 
   return (
-    <AppContainer
+    <ProtectedContainer
       appbar={
         <AppBar
-          title={t("screens.new.title")}
-          subtitle={t("screens.new.description").toString()}
+          title={params.title}
+          subtitle={params.subtitle}
           leftIcon={
             <MaterialIcons
               name="arrow-back"
@@ -220,6 +283,8 @@ const AccountForm = () => {
       }
       height={heightPercentage(87)}
       paddingHorizontalPercentage={5}
+      requireDigitAuth={false}
+      // requireDigitAuth={params?.account_id ? true : false}
     >
       {readyState ? (
         <ScrollView
@@ -243,10 +308,6 @@ const AccountForm = () => {
                 category_id={category?.id}
                 label={t("common.form.sm_label").toString()}
                 placeholder={t("common.form.placeholder_sm_label").toString()}
-                defaultValue={{
-                  id: 0,
-                  icon: Icons.resolveImageUri("00", "Default.png"),
-                }}
               />
               <ControlledPicker
                 name="category"
@@ -358,8 +419,7 @@ const AccountForm = () => {
                   required: false || t("message.errors.required").toString(),
                   validate: {
                     invalid: (str) =>
-                      validateEmail(str) ||
-                      t("message.errors.username").toString(),
+                      validateEmail(str) || t("message.errors.mail").toString(),
                   },
                 }}
               />
@@ -496,7 +556,7 @@ const AccountForm = () => {
           </StyledText>
         </View>
       </TouchableNativeFeedback>
-    </AppContainer>
+    </ProtectedContainer>
   );
 };
 

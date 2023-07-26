@@ -8,15 +8,16 @@ import {
   widthPercentage,
 } from "../../utils/functions.dimensions";
 import DigitInput from "./DigitInput";
-import { VerificationContext } from "./context";
+import { VerificationContext, VerificationValueContext } from "./context";
 import { useFocusEffect } from "@react-navigation/native";
 
 type AppContainerProps = {
-  appbar: React.ReactNode;
-  children: React.ReactNode;
+  appbar?: React.ReactNode;
+  children?: React.ReactNode;
   floatingButton?: React.ReactNode;
   height?: number;
   paddingHorizontalPercentage?: number;
+  requireDigitAuth?: boolean;
 };
 
 const ProtectedContainer = ({
@@ -25,41 +26,50 @@ const ProtectedContainer = ({
   floatingButton,
   height,
   paddingHorizontalPercentage,
+  requireDigitAuth,
 }: AppContainerProps) => {
   const [isVerified, setVerified] = React.useState<boolean>(false);
 
   useFocusEffect(
     React.useCallback(() => {
-      // change this to false
-      setVerified(false);
+      // change this to false if auth is required, true otherwise
+      let ver = false;
+
+      if (requireDigitAuth === false) {
+        ver = true;
+      }
+
+      setVerified(ver);
     }, [])
   );
 
   return (
     <VerificationContext.Provider value={setVerified}>
-      {!isVerified ? (
-        <DigitInput />
-      ) : (
-        <View style={[styles.container]}>
-          {appbar && appbar}
-          <View
-            style={[
-              styles.card,
-              height ? { height } : { flex: 4 },
-              {
-                paddingHorizontal: paddingHorizontalPercentage
-                  ? widthPercentage(paddingHorizontalPercentage as number)
-                  : widthPercentage(8),
-              },
-            ]}
-          >
-            {children ?? null}
+      <VerificationValueContext.Provider value={isVerified}>
+        {!isVerified ? (
+          <DigitInput />
+        ) : (
+          <View style={[styles.container]}>
+            {appbar && appbar}
+            <View
+              style={[
+                styles.card,
+                height ? { height } : { flex: 4 },
+                {
+                  paddingHorizontal: paddingHorizontalPercentage
+                    ? widthPercentage(paddingHorizontalPercentage as number)
+                    : widthPercentage(8),
+                },
+              ]}
+            >
+              {children ?? null}
+            </View>
+            {floatingButton && (
+              <View style={styles.fabContainer}>{floatingButton}</View>
+            )}
           </View>
-          {floatingButton && (
-            <View style={styles.fabContainer}>{floatingButton}</View>
-          )}
-        </View>
-      )}
+        )}
+      </VerificationValueContext.Provider>
     </VerificationContext.Provider>
   );
 };

@@ -79,4 +79,113 @@ export default class SecurityQuestion {
       });
     });
   }
+
+  static updateSecurityQuestion(obj: {
+    question: string;
+    answer: string;
+    sq_id: number;
+  }) {
+    const db = Database.database;
+
+    const sq_query = `
+      UPDATE security_question 
+      SET
+        sq_query = ?, 
+        sq_answer = ?
+      WHERE sq_id = ?;
+    `;
+
+    const params = [obj.question, obj.answer, obj.sq_id];
+
+    if (!db) {
+      throw new Error("Database must be opened before transaction");
+    }
+
+    return new Promise<boolean>((resolve, reject) => {
+      db.transaction((tx: SQLite.SQLTransaction) => {
+        tx.executeSql(
+          sq_query,
+          params,
+          (_, res: SQLite.SQLResultSet) => {
+            resolve(true);
+          },
+          (_, err: SQLite.SQLError) => {
+            reject(err);
+            return false;
+          }
+        );
+      });
+    });
+  }
+
+  static deleteSecurityQuestion(sq_id: number) {
+    const db = Database.database;
+
+    const sq_query = `
+      DELETE FROM security_question 
+      WHERE sq_id = ?;
+    `;
+
+    if (!db) {
+      throw new Error("Database must be opened before transaction");
+    }
+
+    return new Promise<boolean>((resolve, reject) => {
+      db.transaction((tx: SQLite.SQLTransaction) => {
+        tx.executeSql(
+          sq_query,
+          [sq_id],
+          (_, res: SQLite.SQLResultSet) => {
+            resolve(true);
+          },
+          (_, err: SQLite.SQLError) => {
+            reject(err);
+            return false;
+          }
+        );
+      });
+    });
+  }
+
+  static truncateTable() {
+    const db = Database.database;
+
+    const sq_query = `
+      DELETE FROM security_question;
+    `;
+
+    const reset_sequence = `
+      UPDATE SQLITE_SEQUENCE SET SEQ=0 WHERE NAME='security_question';;
+    `;
+
+    if (!db) {
+      throw new Error("Database must be opened before transaction");
+    }
+
+    return new Promise<boolean>((resolve, reject) => {
+      db.transaction((tx: SQLite.SQLTransaction) => {
+        tx.executeSql(
+          sq_query,
+          [],
+          (tx: SQLite.SQLTransaction, _) => {
+            tx.executeSql(
+              reset_sequence,
+              [],
+              () => {
+                resolve(true);
+              },
+              (_, err: SQLite.SQLError) => {
+                reject(false);
+                return false;
+              }
+            );
+          },
+          (_, err: SQLite.SQLError) => {
+            reject(false);
+            return false;
+          }
+        );
+      });
+    });
+  }
 }
