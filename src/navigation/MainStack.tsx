@@ -9,6 +9,7 @@ import AccountForm from "../screens/AccountForm";
 import AccountDetails from "../screens/AccountDetails";
 import ProtectedAction from "../screens/ProtectedAction";
 import CreateUser from "../screens/CreateUser";
+import AddDigit from "../screens/AddDigit";
 
 const Stack = createStackNavigator<MainStackParamList>();
 
@@ -28,6 +29,7 @@ const MainStack = () => {
           <Stack.Screen name="auth" component={AuthScreen} />
           <Stack.Screen name="reset_pass" component={ForgetPassword} />
           <Stack.Screen name="create_user" component={CreateUser} />
+          <Stack.Screen name="add_digit" component={AddDigit} />
         </Stack.Group>
       ) : (
         <Stack.Group>

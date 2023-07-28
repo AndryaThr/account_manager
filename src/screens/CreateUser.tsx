@@ -1,5 +1,11 @@
 import React from "react";
-import { View, TouchableNativeFeedback } from "react-native";
+import {
+  View,
+  TouchableNativeFeedback,
+  ScrollView,
+  BackHandler,
+  Alert,
+} from "react-native";
 import ExtendedStyleSheet from "../components/styles/ExtendedStyleSheet";
 import theme from "../constants/colors";
 import sizes from "../constants/sizes";
@@ -15,10 +21,6 @@ import {
 import { useForm } from "react-hook-form";
 import ControlledInput from "../components/input/ControlledInput";
 import { MaterialIcons, Ionicons, FontAwesome } from "@expo/vector-icons";
-import { validateUsername } from "../utils/functions.string";
-import { Auth } from "../controller/backend/Auth";
-import Loader from "../components/loader/Loader";
-import { useAppDispatch } from "../config/redux";
 import {
   useNavigation,
   NavigationProp,
@@ -28,6 +30,7 @@ import { MainStackParamList } from "../navigation/types";
 import AppContainer from "../components/container/AppContainer";
 import AppBar from "../components/appbar/AppBar";
 import User from "../controller/database/User";
+import { encryptString, generateEncryptionKey } from "../config/crypto/crypto";
 
 type LoginFormValues = {
   name: string;
@@ -43,20 +46,32 @@ const CreateUser = () => {
   const [showSecuredText, setShowSecuredText] = React.useState<boolean>(false);
   const [showSecuredTextConfirmation, setShowSecuredTextConfirmation] =
     React.useState<boolean>(false);
-  const [loading, setLoading] = React.useState<boolean>(false);
-  const [error, setError] = React.useState<string | null | undefined>(
-    undefined
-  );
 
   const { t } = useTranslation();
-  const dispatch = useAppDispatch();
   const navigation = useNavigation<NavigationProp<MainStackParamList>>();
 
-  const { control, handleSubmit } = useForm<LoginFormValues>({
-    mode: "onSubmit",
-  });
+  const { control, handleSubmit, watch, setValue, trigger } =
+    useForm<LoginFormValues>({
+      mode: "onSubmit",
+    });
 
-  const handleAuth = React.useCallback(async (data: LoginFormValues) => {}, []);
+  const { password } = watch();
+
+  const handleNextButtonPress = React.useCallback(
+    async (data: LoginFormValues) => {
+      const params = {
+        user_data: {
+          name: data.name,
+          first_name: data.first_name,
+          password: encryptString(data.password, data.private_key),
+          private_key: data.private_key,
+        },
+      };
+
+      navigation.navigate("add_digit", params);
+    },
+    []
+  );
 
   const handleShowPasswordAction = React.useCallback(() => {
     setShowSecuredText((p) => !p);
@@ -66,8 +81,9 @@ const CreateUser = () => {
     setShowSecuredTextConfirmation((p) => !p);
   }, []);
 
-  const handleForgetPasswordAction = React.useCallback(() => {
-    navigation.navigate("reset_pass");
+  const handleRandomButtonAction = React.useCallback(() => {
+    const a = generateEncryptionKey(16);
+    setValue("private_key", a);
   }, []);
 
   useFocusEffect(
@@ -79,6 +95,41 @@ const CreateUser = () => {
           }
         })
         .catch((err) => console.log(err));
+
+      const handleBackPress = () => {
+        if (true) {
+          Alert.alert(
+            t("message.quit.title").toString(),
+            t("message.quit.description").toString(),
+            [
+              {
+                text: t("common.button.no").toString(),
+                style: "cancel",
+              },
+              {
+                text: t("common.button.yes").toString(),
+                onPress: () => {
+                  BackHandler.exitApp();
+                },
+              },
+            ],
+            {
+              cancelable: true,
+            }
+          );
+
+          return true;
+        }
+      };
+
+      const bh = BackHandler.addEventListener(
+        "hardwareBackPress",
+        handleBackPress
+      );
+
+      return () => {
+        bh.remove();
+      };
     }, [])
   );
 
@@ -92,7 +143,7 @@ const CreateUser = () => {
       }
       height={heightPercentage(85)}
     >
-      <View>
+      <ScrollView>
         <View style={styles.cardTitleContainer}>
           <StyledText textStyle={styles.cardTitle} weight="5">
             {t("screens.create.welcome")}
@@ -118,8 +169,9 @@ const CreateUser = () => {
           placeholderTextColor={inputColor}
           showIcon={false}
           rules={{
-            required: true || t("message.errors.required").toString(),
+            required: false || t("message.errors.required").toString(),
           }}
+          defaultValue="Andriamanantsoa"
         />
         <ControlledInput
           name={"first_name"}
@@ -138,8 +190,9 @@ const CreateUser = () => {
           placeholderTextColor={inputColor}
           showIcon={false}
           rules={{
-            required: true || t("message.errors.required").toString(),
+            required: false || t("message.errors.required").toString(),
           }}
+          defaultValue="Tsitohaina"
         />
         <ControlledInput
           name={"password"}
@@ -166,8 +219,9 @@ const CreateUser = () => {
           placeholderTextColor={inputColor}
           secureTextEntry={!showSecuredText}
           rules={{
-            required: true || t("message.errors.required").toString(),
+            required: false || t("message.errors.required").toString(),
           }}
+          defaultValue="password"
         />
         <ControlledInput
           name={"confirm_password"}
@@ -177,10 +231,10 @@ const CreateUser = () => {
           )}
           rightIcon={() => (
             <Ionicons
-              name={showSecuredText ? "eye" : "eye-off"}
+              name={showSecuredTextConfirmation ? "eye" : "eye-off"}
               size={25}
               color={inputColor}
-              onPress={handleShowPasswordAction}
+              onPress={handleShowPasswordConfirmationAction}
             />
           )}
           containerStyle={styles.containerStyle}
@@ -192,10 +246,15 @@ const CreateUser = () => {
           placeholder={t("common.form.confirm_pass").toString()}
           label={t("common.form.confirm_pass").toString()}
           placeholderTextColor={inputColor}
-          secureTextEntry={!showSecuredText}
+          secureTextEntry={!showSecuredTextConfirmation}
           rules={{
-            required: true || t("message.errors.required").toString(),
+            required: false || t("message.errors.required").toString(),
+            validate: {
+              confirmation: (str) =>
+                str === password || t("message.errors.confirmation").toString(),
+            },
           }}
+          defaultValue="password"
         />
         <ControlledInput
           name={"private_key"}
@@ -204,7 +263,12 @@ const CreateUser = () => {
             <MaterialIcons name="shield" size={25} color={inputColor} />
           )}
           rightIcon={() => (
-            <FontAwesome name="random" size={25} color={inputColor} />
+            <FontAwesome
+              name="random"
+              size={25}
+              color={inputColor}
+              onPress={handleRandomButtonAction}
+            />
           )}
           containerStyle={styles.containerStyle}
           style={styles.input}
@@ -216,25 +280,22 @@ const CreateUser = () => {
           label={t("common.form.private_key").toString()}
           placeholderTextColor={inputColor}
           rules={{
-            required: true || t("message.errors.required").toString(),
+            required: false || t("message.errors.required").toString(),
+            validate: {
+              space_not_allowed: (str) =>
+                !str.includes(" ") ||
+                t("message.errors.space_not_allowed").toString(),
+            },
           }}
         />
-        <TouchableNativeFeedback onPress={handleSubmit(handleAuth)}>
-          <View style={styles.pressableButton}>
-            <StyledText weight="4" textStyle={styles.pressableButtonLabel}>
-              {t("screens.auth.sign_in")}
-            </StyledText>
-          </View>
-        </TouchableNativeFeedback>
-        {error && (
-          <View style={styles.errorContainer}>
-            <StyledText weight="3" textStyle={styles.errorLabel} italic>
-              {error}
-            </StyledText>
-          </View>
-        )}
-      </View>
-      {loading && <Loader color={theme.error} />}
+      </ScrollView>
+      <TouchableNativeFeedback onPress={handleSubmit(handleNextButtonPress)}>
+        <View style={styles.pressableButton}>
+          <StyledText weight="4" textStyle={styles.pressableButtonLabel}>
+            {t("screens.auth.sign_in")}
+          </StyledText>
+        </View>
+      </TouchableNativeFeedback>
     </AppContainer>
   );
 };
@@ -294,9 +355,10 @@ const styles = ExtendedStyleSheet.create({
     ...ExtendedStyleSheet.defaultStyles.alignCenter,
     ...ExtendedStyleSheet.defaultStyles.justifyCenter,
     backgroundColor: theme.purple,
-    height: hScale(50),
+    height: hScale(48),
     borderRadius: sizes.roundedRadius,
-    marginTop: heightPercentage(1),
+    marginTop: heightPercentage(1.5),
+    marginBottom: heightPercentage(1),
   },
   pressableButtonLabel: {
     color: theme.text,

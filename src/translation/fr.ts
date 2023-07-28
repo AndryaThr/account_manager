@@ -41,7 +41,7 @@ const fr = {
       answer: "Réponse",
       placeholder_query: "Question de sécurité ...",
       placeholder_answer: "Réponse correspondante ...",
-      private_key: "Clé de sécurité",
+      private_key: "Clé privé",
     },
     explication_token:
       "Les jetons d'authentification (token) fonctionnent à la manière d'un ticket d'entrée à validité limitée : ils accordent un accès en continu pendant leur durée de validité. Dès que l'utilisateur se déconnecte ou quitte l'application, le jeton est invalidé.",
@@ -60,6 +60,8 @@ const fr = {
       login_error: "Utilisateur ou mot de passe invalide",
       phone_number: "Caractères reconnus: 0 ~ 9, 8 caractères minimum",
       ph_length: "Un numéro téléphone comporte au moins 10 chiffres",
+      confirmation: "Mot de passe non confirmé",
+      space_not_allowed: "Le caractère _ (espace) n'est pas autorisé",
     },
     err_message: {
       err_insert: "Erreur de création",
@@ -70,6 +72,10 @@ const fr = {
     delete: {
       title: "Confirmer suppression",
       description: "Voulez-vous vraiment supprimer?",
+    },
+    quit: {
+      title: "Quitter",
+      description: "Voulez-vous vraiment quitter?",
     },
   },
   screens: {
@@ -132,6 +138,12 @@ const fr = {
       welcome: "Qui êtes vous ?",
       welcome_description:
         "Pour utiliser cette application, veuillez remplir ces champs",
+    },
+    add_digit: {
+      title_1: "Code secret",
+      description_1: "Ajouter un code que seul vous connaissez",
+      title_2: "Confirmation code secret",
+      description_2: "Re-saisir votre code secret",
     },
   },
 };

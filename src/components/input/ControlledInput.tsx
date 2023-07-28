@@ -76,6 +76,7 @@ function ControlledInput<T extends FieldValues>(
         secureTextEntry={props.secureTextEntry}
         numberOfLines={props.multiline ? props.numberOfLines : 1}
         showIcon={props.showIcon}
+        editable={props.editable ?? true}
       />
     </View>
   );

@@ -92,6 +92,26 @@ function formatDateToString(date: Date) {
   return `${day}/${month}/${year}`;
 }
 
+function generateRandomAlphaNumericString(
+  length: number = 16,
+  dict: string = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"
+) {
+  if (typeof length !== "number") {
+    throw new Error(
+      "Type of argument must be number: generateRandomAlphaNumericString"
+    );
+  }
+
+  let result = "";
+
+  for (let i = 0; i < length; i++) {
+    const randomIndex = Math.floor(Math.random() * dict.length);
+    result += dict[randomIndex];
+  }
+
+  return result;
+}
+
 export {
   removeSpaceAtEnd,
   validateUsername,
@@ -101,4 +121,5 @@ export {
   formatPhoneNumber,
   formatDateToISOString,
   formatDateToString,
+  generateRandomAlphaNumericString,
 };

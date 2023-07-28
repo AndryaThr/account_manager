@@ -58,11 +58,11 @@ export default class User {
     });
   }
 
-  static readOne(username: string) {
+  static readOne(username: number) {
     const db = Database.database;
     const query = `
       SELECT * FROM user 
-      WHERE user_uname = ?
+      WHERE user_id = ?
     `;
 
     if (!db) {
@@ -88,30 +88,29 @@ export default class User {
 
   static create(obj: {
     name: string;
-    firstname: string;
-    username: string;
+    first_name: string;
     digit: string;
     password: string;
-    p_key: string;
+    private_key: string;
   }) {
     const db = Database.database;
     const query = `
       INSERT INTO user 
-      (user_name, user_firstname, user_uname, user_digit, user_password, user_private_key)
-      VALUES (?,?,?,?,?,?);
+      (user_name, user_firstname, user_digit, user_password, user_private_key)
+      VALUES (?,?,?,?,?);
     `;
 
     if (!db) {
       throw new Error("Database must be opened before transaction");
     }
 
-    const { name, firstname, username, digit, password, p_key } = obj;
+    const { name, first_name, digit, password, private_key } = obj;
 
     return new Promise<boolean>((resolve, reject) => {
       db.transaction((tx: SQLite.SQLTransaction) => {
         tx.executeSql(
           query,
-          [name, firstname, username, digit, password, p_key],
+          [name, first_name, digit, password, private_key],
           (_, res: SQLite.SQLResultSet) => {
             resolve(true);
           },
@@ -156,7 +155,7 @@ export default class User {
     const db = Database.database;
     const query = `
       SELECT 
-        user_id, user_name, user_firstname, user_uname 
+        user_id, user_name, user_firstname 
       FROM user;
     `;
 

@@ -43,9 +43,7 @@ const HomeScreen = () => {
   const navigation = useNavigation<NavigationProp<MainStackParamList>>();
   const dispatch = useAppDispatch();
 
-  const username = React.useRef(
-    `${user?.user_name} ${user?.user_firstname} / ${user?.user_uname} `
-  );
+  const username = React.useRef(`${user?.user_name} ${user?.user_firstname}`);
   const filterModalRef = React.useRef<FilterModalHandle>(null);
 
   const [list, setList] = React.useState<

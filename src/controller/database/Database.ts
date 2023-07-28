@@ -35,7 +35,7 @@ export default class Database {
     ) {
       const tmp_db = SQLite.openDatabase("database.db");
       await tmp_db.closeAsync();
-      await tmp_db.deleteAsync();
+      // await tmp_db.deleteAsync();
     }
 
     // if db folder doesn't exist, create db folder path

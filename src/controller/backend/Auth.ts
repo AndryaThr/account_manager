@@ -1,5 +1,6 @@
 import User from "../database/User";
 import { decryptString } from "../../config/crypto/crypto";
+import { UserType } from "../types";
 
 type ResponseType = {
   success: boolean;
@@ -8,11 +9,8 @@ type ResponseType = {
 };
 
 export class Auth {
-  static async authUser(
-    username: string,
-    password: string
-  ): Promise<ResponseType> {
-    const user = await User.readOne(username);
+  static async authUser(password: string): Promise<ResponseType> {
+    const user = (await User.readAll())[0] ?? undefined;
 
     // verify if user exists
     if (!user) {
@@ -58,6 +56,30 @@ export class Auth {
       };
     }
 
+    return {
+      success: false,
+    };
+  }
+
+  static async createUser(user: {
+    name: string;
+    first_name: string;
+    digit: string;
+    password: string;
+    private_key: string;
+  }) {
+    if (!user) {
+      throw new Error("createUser arg error");
+    }
+
+    const insertion = await User.create(user);
+
+    if (insertion) {
+      return {
+        success: true,
+        message: "User created",
+      };
+    }
     return {
       success: false,
     };

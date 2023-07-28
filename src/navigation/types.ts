@@ -20,6 +20,15 @@ type MainStackParamList = {
     action: () => void | Promise<void>;
   };
   create_user: undefined;
+  add_digit: {
+    user_data: {
+      name: string;
+      first_name: string;
+      password: string;
+      private_key: string;
+    };
+    digit?: string;
+  };
 };
 
 // with usenavigation

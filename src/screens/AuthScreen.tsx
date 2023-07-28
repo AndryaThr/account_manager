@@ -31,7 +31,7 @@ import AppBar from "../components/appbar/AppBar";
 import User from "../controller/database/User";
 
 type LoginFormValues = {
-  username: string;
+  name: string;
   password: string;
 };
 
@@ -40,6 +40,7 @@ const inputColor = theme.soft_gray;
 const AuthScreen = () => {
   const [showSecuredText, setShowSecuredText] = React.useState<boolean>(false);
   const [loading, setLoading] = React.useState<boolean>(false);
+  const [name, setName] = React.useState<string>();
   const [error, setError] = React.useState<string | null | undefined>(
     undefined
   );
@@ -57,10 +58,10 @@ const AuthScreen = () => {
     setError(null);
 
     try {
-      let username = data.username;
+      let name = data.name;
       let password = data.password;
 
-      const auth = await Auth.authUser(username, password);
+      const auth = await Auth.authUser(password);
       if (auth.success) {
         dispatch(userLoginAction(auth.data));
       } else {
@@ -94,6 +95,16 @@ const AuthScreen = () => {
     }, [])
   );
 
+  React.useEffect(() => {
+    User.fetchAllUsername()
+      .then((val) => {
+        setName(val[0].user_name + " " + val[0].user_firstname);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }, []);
+
   return (
     <AppContainer
       appbar={
@@ -114,7 +125,7 @@ const AuthScreen = () => {
           </StyledText>
         </View>
         <ControlledInput
-          name={"username"}
+          name={"name"}
           control={control}
           leftIcon={() => (
             <MaterialIcons name="person" size={25} color={inputColor} />
@@ -125,19 +136,15 @@ const AuthScreen = () => {
           labelStyle={styles.labelStyle}
           placeholderStyle={styles.placeholderStyle}
           textErrorStyle={styles.textErrorStyle}
-          placeholder={t("screens.auth.username").toString()}
-          label={t("screens.auth.username").toString()}
+          label={t("common.form.name").toString()}
+          placeholder={t("common.form.name").toString()}
           placeholderTextColor={inputColor}
           showIcon={false}
           rules={{
             required: true || t("message.errors.required").toString(),
-            validate: {
-              invalid: (str) =>
-                validateUsername(str) ||
-                t("message.errors.username").toString(),
-            },
           }}
-          defaultValue="andrya.thr"
+          editable={false}
+          defaultValue={name ?? "test"}
         />
         <ControlledInput
           name={"password"}
@@ -159,14 +166,13 @@ const AuthScreen = () => {
           labelStyle={styles.labelStyle}
           placeholderStyle={styles.placeholderStyle}
           textErrorStyle={styles.textErrorStyle}
-          placeholder={t("screens.auth.password").toString()}
-          label={t("screens.auth.password").toString()}
+          placeholder={t("common.form.password").toString()}
+          label={t("common.form.password").toString()}
           placeholderTextColor={inputColor}
           secureTextEntry={!showSecuredText}
           rules={{
             required: true || t("message.errors.required").toString(),
           }}
-          defaultValue="password"
         />
         <View style={styles.forgetPassContainer}>
           <StyledText

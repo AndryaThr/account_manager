@@ -2,7 +2,6 @@ type UserType = {
   user_id: number;
   user_name: string;
   user_firstname: string;
-  user_uname: string;
   user_digit: string;
   user_password: string;
   user_private_key: string;

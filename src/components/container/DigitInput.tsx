@@ -12,21 +12,27 @@ import {
 } from "../../utils/functions.dimensions";
 import StyledText from "../texts/StyledText";
 import { useTranslation } from "react-i18next";
-import { Auth } from "../../controller/backend/Auth";
 import { StateType, useAppSelector } from "../../config/redux";
 import { decryptString } from "../../config/crypto/crypto";
 import { VerificationContext } from "./context";
 
 type InitialPinKeys = "a" | "b" | "c" | "d" | "e" | "f";
+
 const initialPin = { a: "", b: "", c: "", d: "", e: "", f: "" };
 const data = [1, 2, 3, 4, 5, 6, 7, 8, 9, "v", 0, "x"];
 
-const screenBackground = theme.purple;
-const xTranslation = 3;
-const shakeDuration = 50;
-const flashDuration = 150;
+const screenBackground = theme.purple; // color
+const xTranslation = 3; // pixel
+const shakeDuration = 50; // ms
+const flashDuration = 150; // ms
 
-const DigitInput = () => {
+type DigitInputProps = {
+  title?: string;
+  description?: string;
+  onInputEnd?: (str: string) => Promise<boolean>;
+};
+
+const DigitInput = ({ title, description, onInputEnd }: DigitInputProps) => {
   const [pin, setPin] = React.useState(initialPin);
   const [hidden, setHidden] = React.useState<boolean>(true);
   const [isAnimating, setIsAnimating] = React.useState<boolean>(false);
@@ -207,6 +213,18 @@ const DigitInput = () => {
     }
   }, [navigation]);
 
+  const handleAction = useCallback(async () => {
+    if (onInputEnd) {
+      let result = await onInputEnd(pinValue);
+      if (!result) {
+        console.log(result);
+        startErrorAnimation();
+      } else {
+        clearValues();
+      }
+    }
+  }, [onInputEnd, pinValue]);
+
   useFocusEffect(
     React.useCallback(() => {
       if (color !== screenBackground) {
@@ -214,16 +232,6 @@ const DigitInput = () => {
       }
     }, [])
   );
-
-  useEffect(() => {
-    if (pinValue.length === Object.keys(pin).length) {
-      if (decryptedDigit === pinValue) {
-        setVerified(true);
-      } else {
-        startErrorAnimation();
-      }
-    }
-  }, [pinValue]);
 
   useFocusEffect(
     useCallback(() => {
@@ -233,6 +241,29 @@ const DigitInput = () => {
       }
     }, [])
   );
+
+  useEffect(() => {
+    if (user) {
+      if (pinValue.length === Object.keys(pin).length) {
+        if (decryptedDigit === pinValue) {
+          setVerified(true);
+          clearValues();
+        } else {
+          startErrorAnimation();
+        }
+      }
+    } else {
+      if (pinValue.length === Object.keys(pin).length) {
+        handleAction()
+          .then(() => {
+            console.log("Action done");
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+      }
+    }
+  }, [pinValue]);
 
   return (
     <View style={styles.container}>
@@ -247,7 +278,7 @@ const DigitInput = () => {
         </View>
         <View style={styles.titleContainer}>
           <StyledText weight="4" textStyle={styles.titleStyle}>
-            {t("screens.digit.title")}
+            {title ?? t("screens.digit.title")}
           </StyledText>
         </View>
       </View>
@@ -267,7 +298,7 @@ const DigitInput = () => {
         </View>
         <View style={styles.descriptionLabelContainer}>
           <StyledText textStyle={styles.descriptionStyle}>
-            {t("screens.digit.description")}
+            {description ?? t("screens.digit.description")}
           </StyledText>
         </View>
       </View>
@@ -373,7 +404,7 @@ const styles = ExtendedStyleSheet.create({
     color: theme.text,
   },
   optSubContainer: {
-    width: 100 / 10 + "%",
+    width: widthPercentage(100) / 10,
     marginHorizontal: widthPercentage(1),
     alignItems: "center",
     justifyContent: "center",
