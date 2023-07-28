@@ -243,7 +243,7 @@ const styles = ExtendedStyleSheet.create({
   /* button */
   appActionLeftButtonLabel: {
     color: theme.purple,
-    fontSize: moderateScale(16),
+    fontSize: moderateScale(14),
   },
   appActionLeftButton: {
     ...ExtendedStyleSheet.defaultStyles.center,
