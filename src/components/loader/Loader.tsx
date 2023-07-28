@@ -23,5 +23,6 @@ const styles = ExtendedStyleSheet.create({
   container: {
     alignItems: "center",
     justifyContent: "center",
+    backgroundColor: theme.background,
   },
 });

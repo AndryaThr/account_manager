@@ -48,7 +48,7 @@ const fr = {
     asc: "Ascendant",
     desc: "Descendant",
     order: "Ordre",
-    undefined: "...",
+    undefined: "",
   },
   message: {
     error: "Erreur de développement",
@@ -77,6 +77,24 @@ const fr = {
       title: "Quitter",
       description: "Voulez-vous vraiment quitter?",
     },
+    caution: {
+      password:
+        "Votre compte ne pourra plus être restauré si vous oubliez votre mot de passe/code pin",
+      password_long:
+        "Malheureusement, la seule solution pour accéder à l'application est de connaître le mot de passe et le code pin en même temps, tant que vous ne vous en souviendrez pas, vous ne pouvez accéder à votre espace personnel, merci de votre compréhension !",
+      password_long_2:
+        "Par contre, si vous souhaitez quand même utiliser l'application et que vous ne connaissez pas votre mot de passe, la seule solution serait de réinitialiser votre application, toutes les données sauvegardées seraient supprimées, et ne pourront pas être restaurées, pensez-y avant de regretter votre action.",
+      reset_app:
+        "Pour confirmer la réinitialisation de l'application et la perte de toutes vos données, saisissez OK et confirmez",
+    },
+    reset: {
+      title: "Réinitialisation réussie",
+      subtitle: "Félicitations, vous pouvez utiliser l'application à nouveau",
+    },
+    proceed: {
+      title: "Procéder ?",
+      subtitle: "Voulez-vous vraiment continuer ?",
+    },
   },
   screens: {
     auth: {
@@ -90,9 +108,10 @@ const fr = {
       create_account: "Pour associer un autre profil, cliquez ici",
     },
     forget_pass: {
-      title: "Récupérer votre compte",
-      subtitle:
-        "Réinitialisez votre mot de passe pour ré-accéder à votre compte",
+      title: "Réinitialiser l'application",
+      subtitle: "Supprimer toutes les données",
+      header: "Attention !!",
+      ok_label: 'Saisissez "OK" puis validez',
     },
     home: {
       title: "Espace personnel",
@@ -124,7 +143,7 @@ const fr = {
     },
     details: {
       title: "Détails d'un compte",
-      description: "Informations du compte",
+      description: "Informations enregistrées sur le compte",
       sq_description: "Pas de question de sécurité enregistrée pour ce compte",
     },
     edit: {

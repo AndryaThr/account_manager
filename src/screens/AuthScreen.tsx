@@ -1,5 +1,10 @@
 import React from "react";
-import { View, TouchableNativeFeedback } from "react-native";
+import {
+  View,
+  TouchableNativeFeedback,
+  Alert,
+  BackHandler,
+} from "react-native";
 import ExtendedStyleSheet from "../components/styles/ExtendedStyleSheet";
 import theme from "../constants/colors";
 import sizes from "../constants/sizes";
@@ -15,7 +20,6 @@ import {
 import { useForm } from "react-hook-form";
 import ControlledInput from "../components/input/ControlledInput";
 import { MaterialIcons, Ionicons } from "@expo/vector-icons";
-import { validateUsername } from "../utils/functions.string";
 import { Auth } from "../controller/backend/Auth";
 import Loader from "../components/loader/Loader";
 import { useAppDispatch } from "../config/redux";
@@ -40,6 +44,7 @@ const inputColor = theme.soft_gray;
 const AuthScreen = () => {
   const [showSecuredText, setShowSecuredText] = React.useState<boolean>(false);
   const [loading, setLoading] = React.useState<boolean>(false);
+  const [userCheck, setUserCheck] = React.useState<boolean>(false);
   const [name, setName] = React.useState<string>();
   const [error, setError] = React.useState<string | null | undefined>(
     undefined
@@ -89,21 +94,67 @@ const AuthScreen = () => {
         .then((v) => {
           if (!v) {
             navigation.navigate("create_user");
+          } else {
+            User.fetchAllUsername()
+              .then((val) => {
+                setName(val[0].user_name + " " + val[0].user_firstname);
+              })
+              .catch((err) => {
+                console.log(err);
+              });
           }
         })
-        .catch((err) => console.log(err));
+        .catch((err) => console.log(err))
+        .finally(() => {
+          setUserCheck(true);
+        });
     }, [])
   );
 
-  React.useEffect(() => {
-    User.fetchAllUsername()
-      .then((val) => {
-        setName(val[0].user_name + " " + val[0].user_firstname);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  }, []);
+  useFocusEffect(
+    React.useCallback(() => {
+      const handleBackPress = () => {
+        if (!navigation.canGoBack()) {
+          Alert.alert(
+            t("message.quit.title").toString(),
+            t("message.quit.description").toString(),
+            [
+              {
+                text: t("common.button.no").toString(),
+                style: "cancel",
+              },
+              {
+                text: t("common.button.yes").toString(),
+                onPress: () => {
+                  BackHandler.exitApp();
+                },
+              },
+            ],
+            {
+              cancelable: true,
+            }
+          );
+
+          return true;
+        } else {
+          navigation.goBack();
+        }
+      };
+
+      const bh = BackHandler.addEventListener(
+        "hardwareBackPress",
+        handleBackPress
+      );
+
+      return () => {
+        bh.remove();
+      };
+    }, [])
+  );
+
+  if (!userCheck) {
+    return <Loader />;
+  }
 
   return (
     <AppContainer
@@ -140,9 +191,6 @@ const AuthScreen = () => {
           placeholder={t("common.form.name").toString()}
           placeholderTextColor={inputColor}
           showIcon={false}
-          rules={{
-            required: true || t("message.errors.required").toString(),
-          }}
           editable={false}
           defaultValue={name ?? "test"}
         />
@@ -171,7 +219,7 @@ const AuthScreen = () => {
           placeholderTextColor={inputColor}
           secureTextEntry={!showSecuredText}
           rules={{
-            required: true || t("message.errors.required").toString(),
+            required: false || t("message.errors.required").toString(),
           }}
         />
         <View style={styles.forgetPassContainer}>
@@ -200,12 +248,6 @@ const AuthScreen = () => {
         )}
       </View>
       {loading && <Loader color={theme.error} />}
-
-      <View style={styles.createAccountContainer}>
-        <StyledText textStyle={styles.createAccountLabel}>
-          {t("screens.auth.create_account")}
-        </StyledText>
-      </View>
     </AppContainer>
   );
 };

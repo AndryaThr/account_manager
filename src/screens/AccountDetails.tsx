@@ -138,7 +138,8 @@ const AccountDetails = () => {
     <ProtectedContainer
       appbar={
         <AppBar
-          title={t("screens.details.title")}
+          title={t("screens.details.title").toString()}
+          subtitle={t("screens.details.description").toString()}
           leftIcon={
             <MaterialIcons
               name="arrow-back"
@@ -151,17 +152,6 @@ const AccountDetails = () => {
       }
       height={heightPercentage(87)}
       paddingHorizontalPercentage={5}
-      // floatingButton={
-      //   <TouchableOpacity onPress={handleFabAction}>
-      //     <View style={styles.fab}>
-      //       <MaterialIcons
-      //         name="edit"
-      //         color={theme.text}
-      //         size={moderateScale(30)}
-      //       />
-      //     </View>
-      //   </TouchableOpacity>
-      // }
     >
       {!data ? (
         <Loader />

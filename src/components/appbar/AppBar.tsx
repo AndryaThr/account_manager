@@ -189,7 +189,6 @@ const styles = ExtendedStyleSheet.create({
   /* title */
   appTitleMainContainer: {
     paddingHorizontal: widthPercentage(5),
-    paddingTop: heightPercentage(1),
     ...ExtendedStyleSheet.defaultStyles.center,
   },
   appTitleContainer: {
@@ -207,11 +206,11 @@ const styles = ExtendedStyleSheet.create({
     alignItems: "center",
   },
   appTitleLabel: {
-    fontSize: moderateScale(20),
+    fontSize: moderateScale(17),
     color: theme.text,
   },
   appDescriptionLabel: {
-    fontSize: moderateScale(14),
+    fontSize: moderateScale(13),
     color: theme.text,
     textAlign: "center",
   },

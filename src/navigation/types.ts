@@ -29,6 +29,7 @@ type MainStackParamList = {
     };
     digit?: string;
   };
+  settings: undefined;
 };
 
 // with usenavigation

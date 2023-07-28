@@ -5,7 +5,9 @@ type ExtendedTextProps = {
   children?: React.ReactNode | string | JSX.Element;
   italic?: boolean;
   weight?: "1" | "2" | "3" | "4" | "5";
-  textStyle?: Omit<TextStyle, "fontStyle" | "fontWeight">;
+  textStyle?:
+    | Omit<TextStyle, "fontStyle" | "fontWeight">
+    | Omit<TextStyle, "fontStyle" | "fontWeight">[];
 } & Partial<Omit<TextProps, "style" | "children">>;
 
 const StyledText = (props: ExtendedTextProps) => {

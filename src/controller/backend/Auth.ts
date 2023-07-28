@@ -1,6 +1,8 @@
 import User from "../database/User";
 import { decryptString } from "../../config/crypto/crypto";
 import { UserType } from "../types";
+import SecurityQuestion from "../database/SecurityQuestion";
+import Account from "../database/Account";
 
 type ResponseType = {
   success: boolean;
@@ -83,5 +85,26 @@ export class Auth {
     return {
       success: false,
     };
+  }
+
+  static async reset() {
+    try {
+      const security_question = await SecurityQuestion.truncateTable();
+      const account = await Account.truncateTable();
+      const user = await User.truncateTable();
+
+      if (user) {
+        return {
+          success: true,
+          message: "All users deleted successfully",
+        };
+      }
+
+      return {
+        success: false,
+      };
+    } catch (error) {
+      throw error;
+    }
   }
 }

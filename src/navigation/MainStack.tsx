@@ -10,6 +10,7 @@ import AccountDetails from "../screens/AccountDetails";
 import ProtectedAction from "../screens/ProtectedAction";
 import CreateUser from "../screens/CreateUser";
 import AddDigit from "../screens/AddDigit";
+import AccountSettings from "../screens/AccountSettings";
 
 const Stack = createStackNavigator<MainStackParamList>();
 
@@ -36,6 +37,7 @@ const MainStack = () => {
           <Stack.Screen name="home" component={HomeScreen} />
           <Stack.Screen name="add_account" component={AccountForm} />
           <Stack.Screen name="details_account" component={AccountDetails} />
+          <Stack.Screen name="settings" component={AccountSettings} />
         </Stack.Group>
       )}
       <Stack.Screen name="protected_action" component={ProtectedAction} />

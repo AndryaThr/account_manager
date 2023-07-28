@@ -9,6 +9,7 @@ const theme = {
   soft_gray: "#95939F",
   dark: "#1D1128",
   backdrop: "#000000",
+  warning: "#d32f2f",
 
   text: "#ffffff",
   negative_text: "#dddddd",

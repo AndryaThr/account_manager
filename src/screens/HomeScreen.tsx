@@ -3,10 +3,14 @@ import {
   FlatList,
   TouchableOpacity,
   View,
-  RefreshControl,
-  GestureResponderEvent,
+  Alert,
+  BackHandler,
 } from "react-native";
-import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
+import {
+  Ionicons,
+  MaterialCommunityIcons,
+  MaterialIcons,
+} from "@expo/vector-icons";
 import ExtendedStyleSheet from "../components/styles/ExtendedStyleSheet";
 import theme from "../constants/colors";
 import sizes from "../constants/sizes";
@@ -94,6 +98,10 @@ const HomeScreen = () => {
     filterModalRef.current?.showModal();
   }, []);
 
+  const handleLeftButtonClick = React.useCallback(async () => {
+    navigation.navigate("settings");
+  }, []);
+
   const fetchUserAccounts = React.useCallback(() => {
     setList(undefined);
 
@@ -113,6 +121,47 @@ const HomeScreen = () => {
     React.useCallback(() => {
       fetchUserAccounts();
     }, [sortKey, sortType])
+  );
+
+  useFocusEffect(
+    React.useCallback(() => {
+      const handleBackPress = () => {
+        if (!navigation.canGoBack()) {
+          Alert.alert(
+            t("message.quit.title").toString(),
+            t("message.quit.description").toString(),
+            [
+              {
+                text: t("common.button.no").toString(),
+                style: "cancel",
+              },
+              {
+                text: t("common.button.yes").toString(),
+                onPress: () => {
+                  BackHandler.exitApp();
+                },
+              },
+            ],
+            {
+              cancelable: true,
+            }
+          );
+
+          return true;
+        } else {
+          navigation.goBack();
+        }
+      };
+
+      const bh = BackHandler.addEventListener(
+        "hardwareBackPress",
+        handleBackPress
+      );
+
+      return () => {
+        bh.remove();
+      };
+    }, [])
   );
 
   React.useEffect(() => {
@@ -136,11 +185,7 @@ const HomeScreen = () => {
           title={t("screens.home.title")}
           subtitle={username.current}
           leftIcon={
-            <MaterialCommunityIcons
-              name="database"
-              color={theme.text}
-              size={sizes.icon}
-            />
+            <MaterialIcons name="person" color={theme.text} size={sizes.icon} />
           }
           rightIcon={
             <Ionicons
@@ -154,6 +199,7 @@ const HomeScreen = () => {
           subdescription={t("screens.home.description").toString()}
           onButtonPress={handleAddButtonAction}
           onRightIconPress={handleLogOutButtonAction}
+          // onLeftIconPress={handleLeftButtonClick}
         />
       }
     >

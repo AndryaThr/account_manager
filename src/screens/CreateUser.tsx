@@ -31,6 +31,7 @@ import AppContainer from "../components/container/AppContainer";
 import AppBar from "../components/appbar/AppBar";
 import User from "../controller/database/User";
 import { encryptString, generateEncryptionKey } from "../config/crypto/crypto";
+import Divider from "../components/elements/Divider";
 
 type LoginFormValues = {
   name: string;
@@ -141,7 +142,7 @@ const CreateUser = () => {
           subtitle={t("screens.create.subtitle").toString()}
         />
       }
-      height={heightPercentage(85)}
+      height={heightPercentage(87)}
     >
       <ScrollView>
         <View style={styles.cardTitleContainer}>
@@ -171,7 +172,6 @@ const CreateUser = () => {
           rules={{
             required: false || t("message.errors.required").toString(),
           }}
-          defaultValue="Andriamanantsoa"
         />
         <ControlledInput
           name={"first_name"}
@@ -192,8 +192,10 @@ const CreateUser = () => {
           rules={{
             required: false || t("message.errors.required").toString(),
           }}
-          defaultValue="Tsitohaina"
         />
+        <View style={ExtendedStyleSheet.defaultStyles.center}>
+          <Divider />
+        </View>
         <ControlledInput
           name={"password"}
           control={control}
@@ -221,7 +223,6 @@ const CreateUser = () => {
           rules={{
             required: false || t("message.errors.required").toString(),
           }}
-          defaultValue="password"
         />
         <ControlledInput
           name={"confirm_password"}
@@ -254,8 +255,15 @@ const CreateUser = () => {
                 str === password || t("message.errors.confirmation").toString(),
             },
           }}
-          defaultValue="password"
         />
+        <View style={styles.messageContainer}>
+          <StyledText italic textStyle={styles.messageLabel} weight="3">
+            {t("message.caution.password")}
+          </StyledText>
+        </View>
+        <View style={ExtendedStyleSheet.defaultStyles.center}>
+          <Divider />
+        </View>
         <ControlledInput
           name={"private_key"}
           control={control}
@@ -339,15 +347,15 @@ const styles = ExtendedStyleSheet.create({
 
   /* card title */
   cardTitleContainer: {
-    height: heightPercentage(15),
-    paddingTop: heightPercentage(4),
+    marginBottom: heightPercentage(4),
+    marginTop: heightPercentage(4),
   },
   cardTitle: {
-    fontSize: moderateScale(20),
+    fontSize: moderateScale(18),
     color: theme.purple,
   },
   cardTitleDescription: {
-    fontSize: moderateScale(14),
+    fontSize: moderateScale(13),
   },
 
   /* button */
@@ -393,5 +401,15 @@ const styles = ExtendedStyleSheet.create({
   },
   errorLabel: {
     color: theme.error,
+  },
+
+  /* message */
+  messageContainer: {
+    marginBottom: heightPercentage(2),
+  },
+  messageLabel: {
+    fontSize: moderateScale(14),
+    textAlign: "center",
+    color: theme.warning,
   },
 });

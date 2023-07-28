@@ -3,7 +3,6 @@ import {
   View,
   TouchableNativeFeedback,
   ScrollView,
-  KeyboardAvoidingView,
   TouchableHighlight,
   Alert,
 } from "react-native";
@@ -32,7 +31,6 @@ import {
   MainStackParamList,
   MainStackScreenRouteProp,
 } from "../navigation/types";
-import AppContainer from "../components/container/AppContainer";
 import AppBar from "../components/appbar/AppBar";
 import { validateEmail, validateUsername } from "../utils/functions.string";
 import ControlledPicker from "../components/input/ControlledPicker";
@@ -297,7 +295,7 @@ const AccountForm = () => {
             </StyledText>
           </View>
           {/* NAME */}
-          <KeyboardAvoidingView>
+          <View>
             <View style={styles.formContainer}>
               <StyledText textStyle={styles.formLabel}>
                 {t("screens.new.platform_info")}
@@ -544,7 +542,7 @@ const AccountForm = () => {
                 </View>
               </TouchableHighlight>
             </View>
-          </KeyboardAvoidingView>
+          </View>
         </ScrollView>
       ) : (
         <Loader />

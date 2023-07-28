@@ -151,6 +151,48 @@ export default class User {
     });
   }
 
+  static truncateTable() {
+    const db = Database.database;
+
+    const query = `
+      DELETE FROM user;
+    `;
+
+    const reset_sequence = `
+      UPDATE SQLITE_SEQUENCE SET SEQ=0 WHERE NAME='user';
+    `;
+
+    if (!db) {
+      throw new Error("Database must be opened before transaction");
+    }
+
+    return new Promise<boolean>((resolve, reject) => {
+      db.transaction((tx: SQLite.SQLTransaction) => {
+        tx.executeSql(
+          query,
+          [],
+          (tx: SQLite.SQLTransaction, _) => {
+            tx.executeSql(
+              reset_sequence,
+              [],
+              () => {
+                resolve(true);
+              },
+              (_, err: SQLite.SQLError) => {
+                reject(false);
+                return false;
+              }
+            );
+          },
+          (_, err: SQLite.SQLError) => {
+            reject(false);
+            return false;
+          }
+        );
+      });
+    });
+  }
+
   static fetchAllUsername() {
     const db = Database.database;
     const query = `
