@@ -95,7 +95,9 @@ const CreateUser = () => {
             navigation.navigate("create_user");
           }
         })
-        .catch((err) => console.log(err));
+        .catch((err) => {
+          Alert.alert(err.message, err + "\n" + JSON.stringify(err, null, 4));
+        });
 
       const handleBackPress = () => {
         if (true) {

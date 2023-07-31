@@ -1,5 +1,5 @@
 import React from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { Alert, StyleSheet, Text, View } from "react-native";
 import ProtectedContainer from "../components/container/ProtectedContainer";
 import {
   useFocusEffect,
@@ -26,8 +26,7 @@ const ProtectedAction = () => {
             console.log("<.> protected action done");
           })
           .catch((err) => {
-            console.warn("<.> protected action error");
-            console.log("err ", err);
+            Alert.alert(err.message, err + "\n" + JSON.stringify(err, null, 4));
           });
 
         navigation.goBack();

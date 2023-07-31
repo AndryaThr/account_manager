@@ -1,6 +1,12 @@
 import React, { useCallback, useEffect } from "react";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { FlatList, TouchableOpacity, View, Animated } from "react-native";
+import {
+  FlatList,
+  TouchableOpacity,
+  View,
+  Animated,
+  Alert,
+} from "react-native";
 import ExtendedStyleSheet from "../styles/ExtendedStyleSheet";
 import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import { AppBarContext } from "../../main/context";
@@ -259,7 +265,7 @@ const DigitInput = ({ title, description, onInputEnd }: DigitInputProps) => {
             console.log("Action done");
           })
           .catch((err) => {
-            console.log(err);
+            Alert.alert(err.message, err + "\n" + JSON.stringify(err, null, 4));
           });
       }
     }

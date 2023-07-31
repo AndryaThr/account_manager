@@ -231,7 +231,7 @@ const AccountForm = () => {
         setCategories(final);
       })
       .catch((err) => {
-        console.warn("err : ", JSON.stringify(err, null, 4));
+        Alert.alert(err.message, err + "\n" + JSON.stringify(err, null, 4));
         setCategories([]);
       })
       .finally(() => {

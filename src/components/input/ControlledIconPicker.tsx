@@ -2,14 +2,12 @@ import React from "react";
 import { MaterialIcons, MaterialCommunityIcons } from "@expo/vector-icons";
 import {
   FieldValues,
-  Path,
-  PathValue,
   UseControllerProps,
   useController,
 } from "react-hook-form";
 import {
   View,
-  Image,
+  Alert,
   TouchableOpacity,
   Text,
   GestureResponderEvent,
@@ -122,7 +120,7 @@ function ControlledIconPicker<T extends FieldValues>(
         );
       })
       .catch((err) => {
-        console.log(err);
+        Alert.alert(err.message, err + "\n" + JSON.stringify(err, null, 4));
       });
   }, []);
 

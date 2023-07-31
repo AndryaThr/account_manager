@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from "react";
-import { ScrollView, TouchableOpacity, View } from "react-native";
+import { Alert, ScrollView, TouchableOpacity, View } from "react-native";
 import ProtectedContainer from "../components/container/ProtectedContainer";
 import AppBar from "../components/appbar/AppBar";
 import theme from "../constants/colors";
@@ -128,7 +128,7 @@ const AccountDetails = () => {
           setData(val);
         })
         .catch((err) => {
-          console.log(err);
+          Alert.alert(err.message, err + "\n" + JSON.stringify(err, null, 4));
         })
         .finally(() => {});
     }, [])

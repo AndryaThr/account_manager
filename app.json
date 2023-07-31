@@ -1,8 +1,8 @@
 {
   "expo": {
-    "name": "pass_man",
+    "name": "Password Manager",
     "slug": "pass_man",
-    "version": "1.0.0",
+    "version": "0.1.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
@@ -26,6 +26,11 @@
     },
     "web": {
       "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "5e120b43-553d-4dc5-8231-b8c69f7a2741"
+      }
     }
   }
 }

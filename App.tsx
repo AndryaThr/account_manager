@@ -25,6 +25,7 @@ import store from "./src/config/redux";
 import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
 import Icons from "./src/controller/backend/Icons";
 import Loader from "./src/components/loader/Loader";
+import { Alert } from "react-native";
 
 export default function App() {
   const [appReady, setAppReady] = React.useState(false);
@@ -46,8 +47,8 @@ export default function App() {
 
     try {
       await db.init();
-    } catch (error: any) {
-      throw new Error(error);
+    } catch (err: any) {
+      throw err;
     }
   }, []);
 
@@ -58,13 +59,12 @@ export default function App() {
         setAppReady(true);
       })
       .catch((err: any) => {
-        console.log("error ", err.message);
-        console.log("err : ", err);
+        Alert.alert(err.message, err + "\n" + JSON.stringify(err, null, 4));
       });
   }, []);
 
   if (!fontsLoaded || !appReady) {
-    return <Loader />;
+    return <Loader color="#FF5733" />;
   }
 
   return (

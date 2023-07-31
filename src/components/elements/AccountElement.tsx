@@ -1,5 +1,5 @@
 import React from "react";
-import { View, Image, TouchableOpacity } from "react-native";
+import { View, Image, TouchableOpacity, Alert } from "react-native";
 import theme, { colorOfCategory } from "../../constants/colors";
 import {
   heightPercentage,
@@ -55,7 +55,7 @@ const AccountElement = ({ item }: AccountElementType) => {
         }
       })
       .catch((err) => {
-        console.log(err);
+        Alert.alert(err.message, err + "\n" + JSON.stringify(err, null, 4));
       });
   }, []);
 

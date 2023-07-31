@@ -25,44 +25,49 @@ export default class Database {
   }
 
   public async initDatabase(): Promise<SQLite.WebSQLDatabase> {
-    // force db close
-    if (
-      (
-        await FileSystem.getInfoAsync(
+    try {
+      // force db close
+      if (
+        (
+          await FileSystem.getInfoAsync(
+            FileSystem.documentDirectory + "SQLite/database.db"
+          )
+        ).exists
+      ) {
+        const tmp_db = SQLite.openDatabase("database.db");
+        await tmp_db.closeAsync();
+        // await tmp_db.deleteAsync();
+      }
+
+      // if db folder doesn't exist, create db folder path
+      if (
+        !(
+          await FileSystem.getInfoAsync(FileSystem.documentDirectory + "SQLite")
+        ).exists
+      ) {
+        await FileSystem.makeDirectoryAsync(
+          FileSystem.documentDirectory + "SQLite"
+        );
+      }
+
+      // migrate initial database from assets to device internal memory
+      if (
+        !(
+          await FileSystem.getInfoAsync(
+            FileSystem.documentDirectory + "SQLite/database.db"
+          )
+        ).exists
+      ) {
+        await FileSystem.downloadAsync(
+          Asset.fromModule(require("./../../db/database.db")).uri,
           FileSystem.documentDirectory + "SQLite/database.db"
-        )
-      ).exists
-    ) {
-      const tmp_db = SQLite.openDatabase("database.db");
-      await tmp_db.closeAsync();
-      // await tmp_db.deleteAsync();
-    }
+        );
+      }
 
-    // if db folder doesn't exist, create db folder path
-    if (
-      !(await FileSystem.getInfoAsync(FileSystem.documentDirectory + "SQLite"))
-        .exists
-    ) {
-      await FileSystem.makeDirectoryAsync(
-        FileSystem.documentDirectory + "SQLite"
-      );
+      // open database from device internal memory
+      return SQLite.openDatabase("database.db");
+    } catch (err) {
+      throw err;
     }
-
-    // migrate initial database from assets to device internal memory
-    if (
-      !(
-        await FileSystem.getInfoAsync(
-          FileSystem.documentDirectory + "SQLite/database.db"
-        )
-      ).exists
-    ) {
-      await FileSystem.downloadAsync(
-        Asset.fromModule(require("./../../../assets/db/database.db")).uri,
-        FileSystem.documentDirectory + "SQLite/database.db"
-      );
-    }
-
-    // open database from device internal memory
-    return SQLite.openDatabase("database.db");
   }
 }

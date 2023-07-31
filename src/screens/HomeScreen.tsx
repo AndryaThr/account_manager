@@ -111,7 +111,7 @@ const HomeScreen = () => {
           setList(val);
         })
         .catch((err) => {
-          console.log(err);
+          Alert.alert(err.message, err + "\n" + JSON.stringify(err, null, 4));
           setList([]);
         });
     }
@@ -174,7 +174,7 @@ const HomeScreen = () => {
         setCategories(tmp);
       })
       .catch((err) => {
-        console.log(err);
+        Alert.alert(err.message, err + "\n" + JSON.stringify(err, null, 4));
       });
   }, []);
 

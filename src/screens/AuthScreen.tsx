@@ -100,11 +100,16 @@ const AuthScreen = () => {
                 setName(val[0].user_name + " " + val[0].user_firstname);
               })
               .catch((err) => {
-                console.log(err);
+                Alert.alert(
+                  err.message,
+                  err + "\n" + JSON.stringify(err, null, 4)
+                );
               });
           }
         })
-        .catch((err) => console.log(err))
+        .catch((err) => {
+          Alert.alert(err.message, err + "\n" + JSON.stringify(err, null, 4));
+        })
         .finally(() => {
           setUserCheck(true);
         });
@@ -153,7 +158,7 @@ const AuthScreen = () => {
   );
 
   if (!userCheck) {
-    return <Loader />;
+    return <Loader color="#000000" />;
   }
 
   return (
