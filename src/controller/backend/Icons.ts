@@ -1,7 +1,7 @@
 import * as FileSystem from "expo-file-system";
 import { moveFolderContent } from "../../utils/functions.filesystem";
 import { icon_path } from "../../constants/paths";
-import { iconsFolder } from "../../../assets/img";
+import iconsFolder from "../../../assets/img";
 import SocialMedia from "../database/SocialMedia";
 
 class Icons {
