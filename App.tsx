@@ -26,6 +26,7 @@ import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
 import Icons from "./src/controller/backend/Icons";
 import Loader from "./src/components/loader/Loader";
 import { Alert } from "react-native";
+import useImageLoaderStatus from "./assets/img";
 
 export default function App() {
   const [appReady, setAppReady] = React.useState(false);
@@ -42,6 +43,8 @@ export default function App() {
     MontserraItalicBold: Montserrat_700Bold_Italic,
   });
 
+  const imageOk = useImageLoaderStatus();
+
   const initDatabase = React.useCallback(async () => {
     let db = Database.getInstance();
 
@@ -53,7 +56,7 @@ export default function App() {
   }, []);
 
   React.useEffect(() => {
-    Promise.all([initDatabase(), Icons.init()])
+    initDatabase()
       .then(() => {
         console.log("> Database & Icons OK ...");
         setAppReady(true);
@@ -63,7 +66,7 @@ export default function App() {
       });
   }, []);
 
-  if (!fontsLoaded || !appReady) {
+  if (!fontsLoaded || !appReady || !imageOk) {
     return <Loader color="#FF5733" />;
   }
 
