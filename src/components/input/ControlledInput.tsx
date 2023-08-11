@@ -34,6 +34,7 @@ type ControlledInputProps<T extends FieldValues> = {
   leftIcon?: () => JSX.Element;
   rightIcon?: () => JSX.Element;
   defaultValue?: string;
+  keyboardType?: React.ComponentProps<typeof TextInput>["keyboardType"];
 } & UseControllerProps<T> &
   Omit<TextInputProps, "style" | "defaultValue">;
 
@@ -77,6 +78,7 @@ function ControlledInput<T extends FieldValues>(
         numberOfLines={props.multiline ? props.numberOfLines : 1}
         showIcon={props.showIcon}
         editable={props.editable ?? true}
+        keyboardType={props.keyboardType ?? undefined}
       />
     </View>
   );

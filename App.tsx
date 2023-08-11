@@ -54,7 +54,7 @@ export default function App() {
   React.useEffect(() => {
     initDatabase()
       .then(() => {
-        console.log("> Database & Icons OK ...");
+        console.log("> Database OK ...");
         setAppReady(true);
       })
       .catch((err: any) => {

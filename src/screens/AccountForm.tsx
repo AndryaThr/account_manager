@@ -418,6 +418,7 @@ const AccountForm = () => {
                       validateEmail(str) || t("message.errors.mail").toString(),
                   },
                 }}
+                keyboardType="email-address"
               />
 
               {/* PHONE */}
@@ -444,10 +445,11 @@ const AccountForm = () => {
                 rules={{
                   required: false || t("message.errors.required").toString(),
                   pattern: {
-                    value: /^(\+)?\d{8,}$/, // 10-digit phone number pattern
+                    value: /^(\+)?\d{8,}$/, // 8-digit+ phone number pattern
                     message: t("message.errors.phone_number"),
                   },
                 }}
+                keyboardType="number-pad"
               />
 
               {/* PASSWORD */}

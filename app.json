@@ -2,7 +2,7 @@
   "expo": {
     "name": "Password Manager",
     "slug": "pass_man",
-    "version": "0.1.0",
+    "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
@@ -12,8 +12,6 @@
       "backgroundColor": "#ffffff"
     },
     "assetBundlePatterns": [
-      "assets/img/*",
-      "assets/img/categories",
       "**/*"
     ],
     "ios": {
@@ -24,11 +22,6 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "permissions": [
-        "android.permission.ACCESS_MEDIA_LOCATION",
-        "android.permission.READ_EXTERNAL_STORAGE",
-        "android.permission.WRITE_EXTERNAL_STORAGE"
-      ],
       "package": "com.password.manager"
     },
     "web": {
