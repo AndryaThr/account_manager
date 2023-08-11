@@ -4,24 +4,24 @@ import ExtendedStyleSheet from "../styles/ExtendedStyleSheet";
 
 const IconDisplay = ({
   icon_path,
-  image,
+  image_label,
   width,
 }: {
   icon_path: string;
-  image?: string;
+  image_label?: string;
   width?: string | number;
 }) => {
   return (
     <Image
       source={{
-        uri: icon_path,
+        uri: `data:image/png;base64,${icon_path}`,
       }}
       style={[
         styles.image,
         width ? { width } : ExtendedStyleSheet.defaultStyles.full_width,
       ]}
       resizeMode="contain"
-      accessibilityLabel={image}
+      accessibilityLabel={image_label}
     />
   );
 };

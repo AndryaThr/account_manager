@@ -65,7 +65,7 @@ const AccountDetails = () => {
       const d = {
         ...account,
         acc_addate: `${addate.toLocaleDateString()}, ${addate.toLocaleTimeString()}`,
-        icon: Icons.resolveImageUri(account.folder, account.icon),
+        icon: account.image,
         security_questions: securityQuestions,
       };
 
@@ -114,11 +114,27 @@ const AccountDetails = () => {
     }
   }, [data]);
 
-  const handleDeleteButtonAction = React.useCallback(async () => {
-    const sq_list = data?.security_questions?.map((e) => e.id) ?? [];
-    await AccountManagement.deleteAccount(params.account_id, sq_list);
+  const handleDeleteButtonAction = React.useCallback(() => {
+    Alert.alert(
+      t("message.delete.title").toString(),
+      t("message.delete.description").toString(),
+      [
+        {
+          text: t("common.button.yes").toString(),
+          onPress: async () => {
+            const sq_list = data?.security_questions?.map((e) => e.id) ?? [];
+            await AccountManagement.deleteAccount(params.account_id, sq_list);
 
-    navigation.navigate("home");
+            navigation.navigate("home");
+            return true;
+          },
+        },
+        {
+          text: t("common.button.no").toString(),
+          style: "cancel",
+        },
+      ]
+    );
   }, [data]);
 
   useFocusEffect(

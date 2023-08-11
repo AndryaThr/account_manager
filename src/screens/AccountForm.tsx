@@ -37,16 +37,15 @@ import ControlledPicker from "../components/input/ControlledPicker";
 import SocialMedia from "../controller/database/SocialMedia";
 import ControlledIconPicker from "../components/input/ControlledIconPicker";
 import { NumberBetweenZeroAndFifteen, UserType } from "../controller/types";
-import Icons from "../controller/backend/Icons";
 import { findInObject } from "../utils/functions.objects";
 import Loader from "../components/loader/Loader";
-import { icon_path } from "../constants/paths";
 import ControlledSecurityQuestion from "../components/input/ControlledSecurityQuestion";
 import { StateType, useAppDispatch, useAppSelector } from "../config/redux";
 import AccountManagement from "../controller/backend/AccountManagement";
 import { AccountFormValues, CategoryType } from "./types";
 import { decryptString, encryptString } from "../config/crypto/crypto";
 import ProtectedContainer from "../components/container/ProtectedContainer";
+import { default_image } from "../constants/images";
 
 const inputColor = theme.soft_gray;
 
@@ -80,7 +79,7 @@ const AccountForm = () => {
           }
         : {
             platform: {
-              icon: Icons.resolveImageUri("00", "Default.png"),
+              icon: default_image,
             },
           },
     }
@@ -184,7 +183,7 @@ const AccountForm = () => {
 
       setValue("platform", {
         id: 0,
-        icon: `${icon_path}/${currentPlatform.folder}/${currentPlatform.sm_icon}`,
+        icon: currentPlatform.sm_image,
         folder: currentPlatform.folder,
         label: currentPlatform.sm_label,
       });
@@ -282,7 +281,6 @@ const AccountForm = () => {
       height={heightPercentage(87)}
       paddingHorizontalPercentage={5}
       requireDigitAuth={false}
-      // requireDigitAuth={params?.account_id ? true : false}
     >
       {readyState ? (
         <ScrollView

@@ -229,7 +229,7 @@ const HomeScreen = () => {
       </View>
       {!renderedList || !categories ? (
         <Loader />
-      ) : renderedList.length > 0 ? (
+      ) : (
         <FlatList
           data={renderedList}
           renderItem={({ item }) => {
@@ -237,16 +237,17 @@ const HomeScreen = () => {
           }}
           showsVerticalScrollIndicator={false}
           contentContainerStyle={styles.flatlist}
+          ListEmptyComponent={
+            <View
+              style={[
+                ExtendedStyleSheet.defaultStyles.flex_1,
+                ExtendedStyleSheet.defaultStyles.center,
+              ]}
+            >
+              <StyledText>{t("common.nothing")}</StyledText>
+            </View>
+          }
         />
-      ) : (
-        <View
-          style={[
-            ExtendedStyleSheet.defaultStyles.flex_1,
-            ExtendedStyleSheet.defaultStyles.center,
-          ]}
-        >
-          <StyledText>{t("common.nothing")}</StyledText>
-        </View>
       )}
       {categories && (
         <FormProvider {...methods}>
@@ -304,6 +305,7 @@ const styles = ExtendedStyleSheet.create({
   /* content */
   scrollableContent: {},
   flatlist: {
-    paddingBottom: heightPercentage(20),
+    flexGrow: 1,
+    paddingBottom: heightPercentage(10),
   },
 });

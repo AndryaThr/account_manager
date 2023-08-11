@@ -22,6 +22,7 @@ type SMPlatformType = {
   label_fr: string;
   label_eng: string;
   folder: string;
+  sm_image: string;
 };
 
 type AccountInformationType = {
@@ -41,6 +42,7 @@ type AccountInformationType = {
   folder: string;
   category_fr: string;
   category_eng: string;
+  image: string;
 };
 
 type AccountInformationReducedType = {
@@ -56,6 +58,7 @@ type AccountInformationReducedType = {
   folder: string;
   category_fr: string;
   category_eng: string;
+  image: string;
 };
 
 type NumberBetweenZeroAndFifteen =

@@ -1,6 +1,5 @@
 import { RouteProp } from "@react-navigation/native";
 import { StackScreenProps } from "@react-navigation/stack";
-import { AccountInformationReducedType } from "../controller/types";
 import { AccountFormValues } from "../screens/types";
 
 type MainStackParamList = {

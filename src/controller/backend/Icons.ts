@@ -13,10 +13,6 @@ class Icons {
     }[]
   ) {
     try {
-      // await FileSystem.deleteAsync(icon_path, {
-      //   idempotent: true,
-      // });
-
       if (!(await FileSystem.getInfoAsync(icon_path)).exists) {
         await FileSystem.makeDirectoryAsync(icon_path, { intermediates: true });
       }
@@ -52,6 +48,12 @@ class Icons {
   static resolveImageUri(folder: string, pngFile: string) {
     const imageUri = `${icon_path}/${folder}/${pngFile}`;
     return imageUri;
+  }
+
+  static async purgeIcons() {
+    await FileSystem.deleteAsync(icon_path, {
+      idempotent: true,
+    });
   }
 
   static async compareIcons(

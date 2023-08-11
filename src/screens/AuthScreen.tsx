@@ -184,7 +184,11 @@ const AuthScreen = () => {
           name={"name"}
           control={control}
           leftIcon={() => (
-            <MaterialIcons name="person" size={25} color={inputColor} />
+            <MaterialIcons
+              name="person"
+              size={moderateScale(25)}
+              color={inputColor}
+            />
           )}
           containerStyle={styles.containerStyle}
           style={styles.input}
@@ -197,18 +201,22 @@ const AuthScreen = () => {
           placeholderTextColor={inputColor}
           showIcon={false}
           editable={false}
-          defaultValue={name ?? "test"}
+          defaultValue={name ?? "Something went wrong ..."}
         />
         <ControlledInput
           name={"password"}
           control={control}
           leftIcon={() => (
-            <MaterialIcons name="lock" size={25} color={inputColor} />
+            <MaterialIcons
+              name="lock"
+              size={moderateScale(25)}
+              color={inputColor}
+            />
           )}
           rightIcon={() => (
             <Ionicons
               name={showSecuredText ? "eye" : "eye-off"}
-              size={25}
+              size={moderateScale(25)}
               color={inputColor}
               onPress={handleShowPasswordAction}
             />

@@ -48,15 +48,15 @@ const AccountElement = ({ item }: AccountElementType) => {
     let d = formatDateToString(new Date(item.acc_addate));
     setDate(d);
 
-    FileSystem.getInfoAsync(Icons.resolveImageUri(item.folder, item.icon))
-      .then((val) => {
-        if (val.exists) {
-          setIm(val.uri);
-        }
-      })
-      .catch((err) => {
-        Alert.alert(err.message, err + "\n" + JSON.stringify(err, null, 4));
-      });
+    // FileSystem.getInfoAsync(Icons.resolveImageUri(item.folder, item.icon))
+    //   .then((val) => {
+    //     if (val.exists) {
+    //       setIm(val.uri);
+    //     }
+    //   })
+    //   .catch((err) => {
+    //     Alert.alert(err.message, err + "\n" + JSON.stringify(err, null, 4));
+    //   });
   }, []);
 
   return (
@@ -76,7 +76,7 @@ const AccountElement = ({ item }: AccountElementType) => {
           ]}
         >
           <View style={styles.leftIconContainer}>
-            <IconDisplay icon_path={im} />
+            <IconDisplay icon_path={item.image} />
           </View>
           <View style={styles.labelContainer}>
             <View
@@ -143,7 +143,7 @@ const styles = ExtendedStyleSheet.create({
   leftIconContainer: {
     ...ExtendedStyleSheet.defaultStyles.center,
     width: "22%",
-    padding: "4%",
+    padding: "4.5%",
   },
   labelContainer: {
     flex: 1,

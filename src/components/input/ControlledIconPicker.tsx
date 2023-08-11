@@ -41,6 +41,7 @@ import { icon_path } from "../../constants/paths";
 import { useTranslation } from "react-i18next";
 import StateTextInput from "./StateTextInput";
 import { getFolderFromId } from "../../utils/functions.string";
+import { default_image } from "../../constants/images";
 
 type ControlledPickerProps<T extends FieldValues> = {
   name: string;
@@ -99,7 +100,7 @@ function ControlledIconPicker<T extends FieldValues>(
   const handleSelectValue = React.useCallback(
     (iconItem: SMPlatformType) => {
       field.onChange({
-        icon: iconItem.sm_icon,
+        icon: iconItem.sm_image,
         label: iconItem.sm_label,
         folder: iconItem.folder,
         id: iconItem.sm_id,
@@ -112,12 +113,11 @@ function ControlledIconPicker<T extends FieldValues>(
   React.useEffect(() => {
     SocialMedia.fetchSocialMediaPlatform()
       .then((val) => {
-        setList(
-          val.map((e) => ({
-            ...e,
-            sm_icon: `${icon_path}/${e.folder}/${e.sm_icon}`,
-          }))
-        );
+        const final = val.map((e) => ({
+          ...e,
+          sm_icon: `${icon_path}/${e.folder}/${e.sm_icon}`,
+        }));
+        setList(final);
       })
       .catch((err) => {
         Alert.alert(err.message, err + "\n" + JSON.stringify(err, null, 4));
@@ -130,7 +130,7 @@ function ControlledIconPicker<T extends FieldValues>(
 
       if (field.value.folder !== folder) {
         field.onChange({
-          icon: Icons.resolveImageUri("00", "Default.png"),
+          icon: default_image,
           id: 0,
         });
       }
@@ -204,7 +204,7 @@ function ControlledIconPicker<T extends FieldValues>(
             renderItem={({ item }) => (
               <TouchableOpacity onPress={() => handleSelectValue(item)}>
                 <BottomSheetView style={styles.iconContainer}>
-                  <IconDisplay icon_path={item.sm_icon} width={"80%"} />
+                  <IconDisplay icon_path={item.sm_image} width={"80%"} />
                   <StyledText textStyle={styles.iconLabel} numberOfLines={1}>
                     {item.sm_label}
                   </StyledText>
